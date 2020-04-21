@@ -1,4 +1,4 @@
-//TODO: Right Panel GUI (Chart, Textfield, etc)
+// TODO: Right Panel GUI (Chart, Textfield, etc)
 
 package application;
 
@@ -43,6 +43,7 @@ public class Main extends Application {
   private VBox rightPanel;
   private TableView<Farm> csvTable;
   private PieChart chart;
+  private Label rP_Label;
   private ObservableList<Farm> dataList = FXCollections.observableArrayList();
 
   public class Farm {
@@ -74,7 +75,7 @@ public class Main extends Application {
   private void readCSV() {
 
     // TODO: change filePath to your own path
-    String CsvFile = "csv/large/2019-1.csv";
+    String CsvFile = "src/csv/large/2019-1.csv";
     String FieldDelimiter = ",";
 
     BufferedReader br;
@@ -152,7 +153,7 @@ public class Main extends Application {
     Button b_data = new Button("DATA"), b_farm = new Button("FARM"),
         b_annual = new Button("ANNUAL"), b_monthly = new Button("MONTHLY"),
         b_range = new Button("RANGE");
-    Label rP_Label = new Label("Data Pressed");
+    rP_Label = new Label("Data Pressed");
     b_data.setUnderline(true);
 
     GridPane.setHgrow(topPanel, Priority.ALWAYS);
@@ -168,23 +169,23 @@ public class Main extends Application {
 
     b_data.setOnAction(e -> {
       underliner(b_data, b_farm, b_annual, b_monthly, b_range);
-      rP_Label.setText("Data Pressed");
+      showData();
     });
     b_farm.setOnAction(e -> {
       underliner(b_farm, b_data, b_annual, b_monthly, b_range);
-      rP_Label.setText("Farm Pressed");
+      showFarm();
     });
     b_annual.setOnAction(e -> {
       underliner(b_annual, b_farm, b_data, b_monthly, b_range);
-      rP_Label.setText("Annual Pressed");
+      showAnnual();
     });
     b_monthly.setOnAction(e -> {
       underliner(b_monthly, b_farm, b_data, b_annual, b_range);
-      rP_Label.setText("Monthly Pressed");
+      showMonthly();
     });
     b_range.setOnAction(e -> {
       underliner(b_range, b_farm, b_data, b_annual, b_monthly);
-      rP_Label.setText("Range Pressed");
+      showRange();
     });
 
     topPanel.setPadding(new Insets(10));
@@ -213,6 +214,26 @@ public class Main extends Application {
     primaryStage.setTitle("Milky Way");
     primaryStage.setScene(mainScene);
     primaryStage.show();
+  }
+
+  private void showData() {
+    rP_Label.setText("Data Pressed");
+  }
+
+  private void showFarm() {
+    rP_Label.setText("Farm Pressed");
+  }
+
+  private void showAnnual() {
+    rP_Label.setText("Annual Pressed");
+  }
+
+  private void showMonthly() {
+    rP_Label.setText("Monthly Pressed");
+  }
+
+  private void showRange() {
+    rP_Label.setText("Range Pressed");
   }
 
   public static void main(String[] args) {
