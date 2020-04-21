@@ -21,6 +21,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -97,6 +98,12 @@ public class Main extends Application {
     rightPanel = new VBox();
     csvTable = new TableView<>();
 
+    GridPane.setHgrow(topPanel, Priority.ALWAYS);
+    GridPane.setVgrow(topPanel, Priority.ALWAYS);
+    GridPane.setHgrow(csvTable, Priority.ALWAYS);
+    GridPane.setVgrow(csvTable, Priority.ALWAYS);
+    GridPane.setHgrow(rightPanel, Priority.ALWAYS);
+    GridPane.setVgrow(rightPanel, Priority.ALWAYS);
     root.setPadding(new Insets(10));
     root.add(topPanel, 0, 0, 5, 1);
     root.add(csvTable, 0, 1, 5, 10);
@@ -110,6 +117,7 @@ public class Main extends Application {
     rightPanel.setPadding(new Insets(10));
     rightPanel.setSpacing(10);
     rightPanel.getChildren().add(new Text(csvTable.getMinHeight() + " " + csvTable.getMaxHeight()));
+    rightPanel.prefWidthProperty().bind(primaryStage.widthProperty());
 
     TableColumn f1 = new TableColumn("FARM");
     f1.setCellValueFactory(new PropertyValueFactory<>("f1"));
@@ -119,16 +127,14 @@ public class Main extends Application {
     f3.setCellValueFactory(new PropertyValueFactory<>("f3"));
     csvTable.getColumns().addAll(f1, f2, f3);
     csvTable.setItems(dataList);
+    csvTable.prefHeightProperty().bind(primaryStage.heightProperty());
+    
     readCSV();
 
+    primaryStage.setResizable(false);
     primaryStage.setTitle("Milky Way");
     primaryStage.setScene(mainScene);
     primaryStage.show();
-  }
-
-
-  private void setup() {
-
   }
 
   public static void main(String[] args) {
