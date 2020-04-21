@@ -1,5 +1,6 @@
-package application;
+//TODO: Right Panel GUI (Chart, Textfield, etc)
 
+package application;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -17,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -27,6 +29,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -39,6 +42,7 @@ public class Main extends Application {
   private HBox topPanel;
   private VBox rightPanel;
   private TableView<Farm> csvTable;
+  private PieChart chart;
   private ObservableList<Farm> dataList = FXCollections.observableArrayList();
 
   public class Farm {
@@ -69,7 +73,8 @@ public class Main extends Application {
 
   private void readCSV() {
 
-    String CsvFile = "src/csv/large/2019-1.csv";
+    // TODO: change filePath to your own path
+    String CsvFile = "csv/large/2019-1.csv";
     String FieldDelimiter = ",";
 
     BufferedReader br;
@@ -106,43 +111,49 @@ public class Main extends Application {
 
   }
 
+  private void underliner(Button target, Button b1, Button b2, Button b3, Button b4) {
+    if (b1.isUnderline()) {
+      b1.setUnderline(false);
+    }
+    if (b2.isUnderline()) {
+      b2.setUnderline(false);
+    }
+    if (b3.isUnderline()) {
+      b3.setUnderline(false);
+    }
+    if (b4.isUnderline()) {
+      b4.setUnderline(false);
+    }
+    if (!target.isUnderline()) {
+      target.setUnderline(true);
+    }
+  }
+
+  private PieChart chartMaker() {
+    // temp pie-chart
+    ObservableList<PieChart.Data> pieChartData =
+        FXCollections.observableArrayList(new PieChart.Data("farm1", 13),
+            new PieChart.Data("farm2", 25), new PieChart.Data("farm3", 10),
+            new PieChart.Data("farm4", 22), new PieChart.Data("farm5", 30));
+    PieChart pieChart = new PieChart(pieChartData);
+    pieChart.setTitle("Default Chart");
+    return pieChart;
+  }
+
   @Override
   public void start(Stage primaryStage) throws Exception {
     root = new GridPane();
+
     mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
     topPanel = new HBox();
+    // rightPanel = new VBox();
     rightPanel = new VBox();
     csvTable = new TableView<>();
     Button b_data = new Button("DATA"), b_farm = new Button("FARM"),
         b_annual = new Button("ANNUAL"), b_monthly = new Button("MONTHLY"),
         b_range = new Button("RANGE");
     Label rP_Label = new Label("Data Pressed");
-
-    EventHandler<ActionEvent> showdata = new EventHandler<ActionEvent>() {
-      public void handle(ActionEvent arg0) {
-        rP_Label.setText("Data Pressed");
-      }
-    };
-    EventHandler<ActionEvent> showfarm = new EventHandler<ActionEvent>() {
-      public void handle(ActionEvent arg0) {
-        rP_Label.setText("Farm Pressed");
-      }
-    };
-    EventHandler<ActionEvent> showannual = new EventHandler<ActionEvent>() {
-      public void handle(ActionEvent arg0) {
-        rP_Label.setText("Annual Pressed");
-      }
-    };
-    EventHandler<ActionEvent> showmonthly = new EventHandler<ActionEvent>() {
-      public void handle(ActionEvent arg0) {
-        rP_Label.setText("Monthly Pressed");
-      }
-    };
-    EventHandler<ActionEvent> showrange = new EventHandler<ActionEvent>() {
-      public void handle(ActionEvent arg0) {
-        rP_Label.setText("Range Pressed");
-      }
-    };
+    b_data.setUnderline(true);
 
     GridPane.setHgrow(topPanel, Priority.ALWAYS);
     GridPane.setVgrow(topPanel, Priority.ALWAYS);
@@ -154,12 +165,27 @@ public class Main extends Application {
     root.add(topPanel, 0, 0, 5, 1);
     root.add(csvTable, 0, 1, 5, 10);
     root.add(rightPanel, 5, 0, 4, 10);
-    
-    b_data.setOnAction(showdata);
-    b_farm.setOnAction(showfarm);
-    b_annual.setOnAction(showannual);
-    b_monthly.setOnAction(showmonthly);
-    b_range.setOnAction(showrange);
+
+    b_data.setOnAction(e -> {
+      underliner(b_data, b_farm, b_annual, b_monthly, b_range);
+      rP_Label.setText("Data Pressed");
+    });
+    b_farm.setOnAction(e -> {
+      underliner(b_farm, b_data, b_annual, b_monthly, b_range);
+      rP_Label.setText("Farm Pressed");
+    });
+    b_annual.setOnAction(e -> {
+      underliner(b_annual, b_farm, b_data, b_monthly, b_range);
+      rP_Label.setText("Annual Pressed");
+    });
+    b_monthly.setOnAction(e -> {
+      underliner(b_monthly, b_farm, b_data, b_annual, b_range);
+      rP_Label.setText("Monthly Pressed");
+    });
+    b_range.setOnAction(e -> {
+      underliner(b_range, b_farm, b_data, b_annual, b_monthly);
+      rP_Label.setText("Range Pressed");
+    });
 
     topPanel.setPadding(new Insets(10));
     topPanel.setSpacing(10);
@@ -168,8 +194,9 @@ public class Main extends Application {
     rightPanel.setPadding(new Insets(10));
     rightPanel.setSpacing(10);
     rightPanel.getChildren().add(rP_Label);
+    // add temp chart --> rightPanel.getChildren().add(chart=chartMaker());
     rightPanel.prefWidthProperty().bind(primaryStage.widthProperty());
-    
+
     TableColumn f1 = new TableColumn("FARM");
     f1.setCellValueFactory(new PropertyValueFactory<>("f1"));
     TableColumn f2 = new TableColumn("DATE");
