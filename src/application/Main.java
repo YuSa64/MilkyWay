@@ -13,9 +13,12 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -86,7 +89,7 @@ public class Main extends Application {
           farm_id = farm_id.substring(5);
           while (farm_id.length() < 3)
             farm_id = "0" + farm_id;
-          
+
           weight = Integer.parseInt(pweight);
 
           Farm record = new Farm(farm_id, date, weight);
@@ -110,6 +113,36 @@ public class Main extends Application {
     topPanel = new HBox();
     rightPanel = new VBox();
     csvTable = new TableView<>();
+    Button b_data = new Button("DATA"), b_farm = new Button("FARM"),
+        b_annual = new Button("ANNUAL"), b_monthly = new Button("MONTHLY"),
+        b_range = new Button("RANGE");
+    Label rP_Label = new Label("Data Pressed");
+
+    EventHandler<ActionEvent> showdata = new EventHandler<ActionEvent>() {
+      public void handle(ActionEvent arg0) {
+        rP_Label.setText("Data Pressed");
+      }
+    };
+    EventHandler<ActionEvent> showfarm = new EventHandler<ActionEvent>() {
+      public void handle(ActionEvent arg0) {
+        rP_Label.setText("Farm Pressed");
+      }
+    };
+    EventHandler<ActionEvent> showannual = new EventHandler<ActionEvent>() {
+      public void handle(ActionEvent arg0) {
+        rP_Label.setText("Annual Pressed");
+      }
+    };
+    EventHandler<ActionEvent> showmonthly = new EventHandler<ActionEvent>() {
+      public void handle(ActionEvent arg0) {
+        rP_Label.setText("Monthly Pressed");
+      }
+    };
+    EventHandler<ActionEvent> showrange = new EventHandler<ActionEvent>() {
+      public void handle(ActionEvent arg0) {
+        rP_Label.setText("Range Pressed");
+      }
+    };
 
     GridPane.setHgrow(topPanel, Priority.ALWAYS);
     GridPane.setVgrow(topPanel, Priority.ALWAYS);
@@ -121,17 +154,22 @@ public class Main extends Application {
     root.add(topPanel, 0, 0, 5, 1);
     root.add(csvTable, 0, 1, 5, 10);
     root.add(rightPanel, 5, 0, 4, 10);
+    
+    b_data.setOnAction(showdata);
+    b_farm.setOnAction(showfarm);
+    b_annual.setOnAction(showannual);
+    b_monthly.setOnAction(showmonthly);
+    b_range.setOnAction(showrange);
 
     topPanel.setPadding(new Insets(10));
     topPanel.setSpacing(10);
-    topPanel.getChildren().addAll(new Button("DATA"), new Button("FARM"), new Button("ANNUAL"),
-        new Button("MONTHLY"), new Button("RANGE"));
+    topPanel.getChildren().addAll(b_data, b_farm, b_annual, b_monthly, b_range);
 
     rightPanel.setPadding(new Insets(10));
     rightPanel.setSpacing(10);
-    rightPanel.getChildren().add(new Text("Sample Text"));
+    rightPanel.getChildren().add(rP_Label);
     rightPanel.prefWidthProperty().bind(primaryStage.widthProperty());
-
+    
     TableColumn f1 = new TableColumn("FARM");
     f1.setCellValueFactory(new PropertyValueFactory<>("f1"));
     TableColumn f2 = new TableColumn("DATE");
