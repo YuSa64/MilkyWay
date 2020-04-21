@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import application.Main.Farm;
 import javafx.application.Application;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,7 +41,8 @@ public class Main extends Application {
   public class Farm {
     // Assume each record have 6 elements, all String
 
-    private SimpleStringProperty f1, f2, f3;
+    private SimpleStringProperty f1, f2;
+    private SimpleIntegerProperty f3;
 
     public String getF1() {
       return f1.get();
@@ -50,14 +52,14 @@ public class Main extends Application {
       return f2.get();
     }
 
-    public String getF3() {
+    public int getF3() {
       return f3.get();
     }
 
-    Farm(String farm_id, String date, String weight) {
+    Farm(String farm_id, String date, int weight) {
       this.f1 = new SimpleStringProperty(farm_id);
       this.f2 = new SimpleStringProperty(date);
-      this.f3 = new SimpleStringProperty(weight);
+      this.f3 = new SimpleIntegerProperty(weight);
     }
 
   }
@@ -75,10 +77,21 @@ public class Main extends Application {
       String line;
       while ((line = br.readLine()) != null) {
         String[] fields = line.split(FieldDelimiter, -1);
+        if (!fields[1].equals("farm_id")) {
+          String farm_id = fields[1];
+          String date = fields[0];
+          String pweight = fields[2];
+          int weight = 0;
 
-        Farm record =
-            new Farm(fields[1], fields[0], fields[2]);
-        dataList.add(record);
+          farm_id = farm_id.substring(5);
+          while (farm_id.length() < 3)
+            farm_id = "0" + farm_id;
+          
+          weight = Integer.parseInt(pweight);
+
+          Farm record = new Farm(farm_id, date, weight);
+          dataList.add(record);
+        }
 
       }
 
@@ -116,7 +129,7 @@ public class Main extends Application {
 
     rightPanel.setPadding(new Insets(10));
     rightPanel.setSpacing(10);
-    rightPanel.getChildren().add(new Text(csvTable.getMinHeight() + " " + csvTable.getMaxHeight()));
+    rightPanel.getChildren().add(new Text("Sample Text"));
     rightPanel.prefWidthProperty().bind(primaryStage.widthProperty());
 
     TableColumn f1 = new TableColumn("FARM");
@@ -128,7 +141,7 @@ public class Main extends Application {
     csvTable.getColumns().addAll(f1, f2, f3);
     csvTable.setItems(dataList);
     csvTable.prefHeightProperty().bind(primaryStage.heightProperty());
-    
+
     readCSV();
 
     primaryStage.setResizable(false);
