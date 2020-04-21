@@ -75,7 +75,7 @@ public class Main extends Application {
   private void readCSV() {
 
     // TODO: change filePath to your own path
-    String CsvFile = "src/csv/large/2019-1.csv";
+    String CsvFile = "large/2019-1.csv";
     String FieldDelimiter = ",";
 
     BufferedReader br;
