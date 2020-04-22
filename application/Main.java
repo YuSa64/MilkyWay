@@ -17,32 +17,41 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
-  private static final int WINDOW_WIDTH = 1000;
-  private static final int WINDOW_HEIGHT = 800;
-  private GridPane root;
+  private static final int WINDOW_WIDTH = 800;
+  private static final int WINDOW_HEIGHT = 600;
+  // private GridPane root;
+  private BorderPane root;
   private Scene mainScene;
-  private HBox topPanel;
+  private VBox leftPanel;
   private VBox rightPanel;
+  private HBox leftTop;
+  private HBox rightTop;
+  private HBox rightBottom;
   private TableView<Farm> csvTable;
-  private PieChart chart;
+  private PieChart farmChart;
+  private PieChart monthChart;
   private Label rP_Label;
   private ObservableList<Farm> dataList = FXCollections.observableArrayList();
 
@@ -75,7 +84,7 @@ public class Main extends Application {
   private void readCSV() {
 
     // TODO: change filePath to your own path
-    String CsvFile = "large/2019-1.csv";
+    String CsvFile = "/csv/large/2019-1.csv";
     String FieldDelimiter = ",";
 
     BufferedReader br;
@@ -93,9 +102,9 @@ public class Main extends Application {
           int weight = 0;
 
           farm_id = farm_id.substring(5);
-          while (farm_id.length() < 3)
+          while (farm_id.length() < 3) {
             farm_id = "0" + farm_id;
-
+          }
           weight = Integer.parseInt(pweight);
 
           Farm record = new Farm(farm_id, date, weight);
@@ -130,24 +139,26 @@ public class Main extends Application {
     }
   }
 
-  private PieChart chartMaker() {
+  private PieChart chartMaker(String chartName) {
     // temp pie-chart
     ObservableList<PieChart.Data> pieChartData =
         FXCollections.observableArrayList(new PieChart.Data("farm1", 13),
             new PieChart.Data("farm2", 25), new PieChart.Data("farm3", 10),
             new PieChart.Data("farm4", 22), new PieChart.Data("farm5", 30));
     PieChart pieChart = new PieChart(pieChartData);
-    pieChart.setTitle("Default Chart");
+    pieChart.setTitle(chartName);
+    pieChart.setLabelsVisible(false);
     return pieChart;
   }
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    root = new GridPane();
-
+    // root = new GridPane();
+    root = new BorderPane();
     mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-    topPanel = new HBox();
-    // rightPanel = new VBox();
+    leftPanel = new VBox();
+    leftTop = new HBox();
+    rightTop = new HBox();
     rightPanel = new VBox();
     csvTable = new TableView<>();
     Button b_data = new Button("DATA"), b_farm = new Button("FARM"),
@@ -156,17 +167,150 @@ public class Main extends Application {
     rP_Label = new Label("Data Pressed");
     b_data.setUnderline(true);
 
-    GridPane.setHgrow(topPanel, Priority.ALWAYS);
-    GridPane.setVgrow(topPanel, Priority.ALWAYS);
-    GridPane.setHgrow(csvTable, Priority.ALWAYS);
-    GridPane.setVgrow(csvTable, Priority.ALWAYS);
-    GridPane.setHgrow(rightPanel, Priority.ALWAYS);
-    GridPane.setVgrow(rightPanel, Priority.ALWAYS);
-    root.setPadding(new Insets(10));
-    root.add(topPanel, 0, 0, 5, 1);
-    root.add(csvTable, 0, 1, 5, 10);
-    root.add(rightPanel, 5, 0, 4, 10);
+    // left-top
+    leftTop.setPadding(new Insets(10));
+    leftTop.setSpacing(10);
+    leftTop.getChildren().addAll(b_data, b_farm, b_annual, b_monthly, b_range);
 
+    // right-top
+    Label d_label = new Label("Date");
+    d_label.prefWidthProperty().bind(rightTop.widthProperty().divide(4).multiply(3));
+    d_label.setFont(new Font(d_label.getFont().getName(), 20));
+    Label f_label = new Label("Farm ID");
+    f_label.prefWidthProperty().bind(rightTop.widthProperty().divide(4));
+    f_label.setFont(new Font(f_label.getFont().getName(), 20));
+    rightTop.getChildren().addAll(d_label, f_label);
+
+    // data grid 1
+    GridPane d_grid1 = new GridPane();
+    d_grid1.setHgap(10);
+    d_grid1.setVgap(10);
+    Label year = new Label("YEAR");
+    year.setStyle("-fx-border-color: black;");
+    year.setPadding(new Insets(5));
+    year.prefWidthProperty().bind(d_grid1.widthProperty().divide(8));
+    Label month = new Label("MONTH");
+    month.setStyle("-fx-border-color: black;");
+    month.setPadding(new Insets(5));
+    month.prefWidthProperty().bind(d_grid1.widthProperty().divide(4));
+    Label day = new Label("DAY");
+    day.setStyle("-fx-border-color: black;");
+    day.setPadding(new Insets(5));
+    day.prefWidthProperty().bind(d_grid1.widthProperty().divide(8));
+    Label id = new Label("#");
+    id.setStyle("-fx-border-color: black;");
+    id.setPadding(new Insets(5));
+    id.prefWidthProperty().bind(d_grid1.widthProperty().divide(8));
+    d_grid1.add(year, 0, 0);
+    d_grid1.add(month, 1, 0);
+    d_grid1.add(day, 2, 0);
+    d_grid1.add(id, 10, 0);
+
+    // data grid 2
+    GridPane d_grid2 = new GridPane();
+    d_grid2.setHgap(10);
+    d_grid2.setVgap(10);
+    Label w_label = new Label("Weight");
+    w_label.prefWidthProperty().bind(d_grid2.widthProperty().divide(2));
+    w_label.setFont(new Font(w_label.getFont().getName(), 20));
+    Label wt = new Label("(weight)");
+    wt.setStyle("-fx-border-color: black;");
+    wt.setPadding(new Insets(5));
+    wt.prefWidthProperty().bind(d_grid2.widthProperty().divide(3));
+    Button add = new Button("ADD");
+    Button edit = new Button("EDIT");
+    Button remove = new Button("REMOVE");
+    d_grid2.add(w_label, 0, 0);
+    d_grid2.add(wt, 0, 1);
+    d_grid2.add(add, 1, 1);
+    d_grid2.add(edit, 2, 1);
+    d_grid2.add(remove, 3, 1);
+
+    // data grid 3
+    GridPane d_grid3 = new GridPane();
+    d_grid3.setHgap(10);
+    d_grid3.setVgap(10);
+    Label s_label = new Label("Statistic");
+    s_label.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
+    s_label.setFont(new Font(d_label.getFont().getName(), 20));
+    farmChart = chartMaker("FARM");
+    monthChart = chartMaker("MONTH");
+    farmChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
+    monthChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
+    d_grid3.add(s_label, 0, 0);
+    d_grid3.add(farmChart, 0, 1);
+    d_grid3.add(monthChart, 1, 1);
+
+    // data HBox bottom
+    rightBottom = new HBox();
+    Label totalWt = new Label("Total Weight:");
+    Label total = new Label("(total)");
+    totalWt.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
+    totalWt.setFont(new Font(f_label.getFont().getName(), 16));
+    total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
+    total.setFont(new Font(f_label.getFont().getName(), 16));
+    rightBottom.getChildren().addAll(totalWt, total);
+
+
+
+    // d_hbox.getChildren().addAll(year, month, day, id);
+
+
+    // GridPane g1 = new GridPane();
+    // Label date = new Label("Date");
+    // Label farm = new Label("Farm ID");
+    // Label year = new Label("2019");
+    // Label month = new Label("1");
+    // Label day = new Label("1");
+    // Label farm_id = new Label("id_01");
+    // Label weight = new Label("Weight");
+    // Label weightData = new Label("weight...");
+    // Button add = new Button("ADD");
+    // Button edit = new Button("EDIT");
+    // Button remove = new Button("REMOVE");
+    // g1.add(date, 0, 0);
+    // g1.add(farm, 3, 0);
+    // g1.add(year, 0, 1);
+    // g1.add(month, 1, 1);
+    // g1.add(day, 2, 1);
+    // g1.add(farm_id, 3, 1);
+    // g1.add(weight, 0, 2);
+    // g1.add(weightData, 0, 3);
+    // g1.add(add, 3, 3);
+    // g1.add(edit, 4, 3);
+    // g1.add(remove, 5, 3);
+    // g1.setHgap(10);
+    // g1.setVgap(10);
+    // g1.setAlignment(Pos.BASELINE_LEFT);
+
+
+    // GridPane.setHgrow(topPanel, Priority.ALWAYS);
+    // GridPane.setVgrow(topPanel, Priority.ALWAYS);
+    // GridPane.setHgrow(csvTable, Priority.ALWAYS);
+    // GridPane.setVgrow(csvTable, Priority.ALWAYS);
+    // GridPane.setHgrow(rightPanel, Priority.ALWAYS);
+    // GridPane.setVgrow(rightPanel, Priority.ALWAYS);
+    root.setPadding(new Insets(10));
+    // root.add(topPanel, 0, 0, 5, 1);
+    // root.add(csvTable, 0, 1, 5, 10);
+    // root.add(rightPanel, 5, 1, 4, 10);
+
+    // leftPanel
+    leftPanel.getChildren().addAll(leftTop, csvTable);
+
+    // rightPanel
+    rightPanel.setPadding(new Insets(10));
+    rightPanel.setSpacing(10);
+    // rightPanel.getChildren().add(rP_Label);
+    rightPanel.getChildren().addAll(rightTop, d_grid1, d_grid2, d_grid3, rightBottom);
+    // rightPanel.prefWidthProperty().bind(primaryStage.widthProperty());
+
+    // root.setTop(topPanel);
+    // root.setLeft(csvTable);
+    root.setLeft(leftPanel);
+    root.setCenter(rightPanel);
+
+    // Action Event: Buttons
     b_data.setOnAction(e -> {
       underliner(b_data, b_farm, b_annual, b_monthly, b_range);
       showData();
@@ -188,27 +332,26 @@ public class Main extends Application {
       showRange();
     });
 
-    topPanel.setPadding(new Insets(10));
-    topPanel.setSpacing(10);
-    topPanel.getChildren().addAll(b_data, b_farm, b_annual, b_monthly, b_range);
-
-    rightPanel.setPadding(new Insets(10));
-    rightPanel.setSpacing(10);
-    rightPanel.getChildren().add(rP_Label);
-    // add temp chart --> rightPanel.getChildren().add(chart=chartMaker());
-    rightPanel.prefWidthProperty().bind(primaryStage.widthProperty());
-
-    TableColumn f1 = new TableColumn("FARM");
+    TableColumn<Farm, String> f1 = new TableColumn<>("FARM");
     f1.setCellValueFactory(new PropertyValueFactory<>("f1"));
-    TableColumn f2 = new TableColumn("DATE");
+    TableColumn<Farm, String> f2 = new TableColumn<>("DATE");
     f2.setCellValueFactory(new PropertyValueFactory<>("f2"));
-    TableColumn f3 = new TableColumn("WEIGHT");
+    TableColumn<Farm, Integer> f3 = new TableColumn<>("WEIGHT");
     f3.setCellValueFactory(new PropertyValueFactory<>("f3"));
+    f1.prefWidthProperty().bind(csvTable.widthProperty().divide(6));
+    f2.prefWidthProperty().bind(csvTable.widthProperty().divide(6).multiply(2));
+    f3.prefWidthProperty().bind(csvTable.widthProperty().divide(6).multiply(3));
     csvTable.getColumns().addAll(f1, f2, f3);
     csvTable.setItems(dataList);
+
     csvTable.prefHeightProperty().bind(primaryStage.heightProperty());
+    csvTable.prefWidthProperty()
+        .bind(b_data.widthProperty().add(b_farm.widthProperty()).add(b_annual.widthProperty())
+            .add(b_monthly.widthProperty()).add(b_range.widthProperty()).add(60));
 
     readCSV();
+
+    System.out.println(csvTable.getColumns().size());
 
     primaryStage.setResizable(false);
     primaryStage.setTitle("Milky Way");
