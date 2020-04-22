@@ -71,5 +71,5 @@ local.properties
 .sts4-cache/
 
 # End of https://www.gitignore.io/api/eclipse
-src/Makefile
 Makefile
+ateam.zip
