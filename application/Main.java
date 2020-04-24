@@ -32,7 +32,6 @@ public class Main extends Application {
 
   private static final int WINDOW_WIDTH = 800;
   private static final int WINDOW_HEIGHT = 600;
-  // private GridPane root;
   private BorderPane root;
   private Scene mainScene;
   private VBox leftPanel;
@@ -46,9 +45,34 @@ public class Main extends Application {
   Button[] leftB;
   Label[] rightL;
   private ObservableList<Farm> dataList = FXCollections.observableArrayList();
-  
 
 
+  private void underliner(Button target, Button b1, Button b2, Button b3, Button b4) {
+    if (b1.isUnderline()) {
+      b1.setUnderline(false);
+    }
+    if (b2.isUnderline()) {
+      b2.setUnderline(false);
+    }
+    if (b3.isUnderline()) {
+      b3.setUnderline(false);
+    }
+    if (b4.isUnderline()) {
+      b4.setUnderline(false);
+    }
+    if (!target.isUnderline()) {
+      target.setUnderline(true);
+    }
+  }
+
+
+  @Override
+  public void start(Stage primaryStage) throws Exception {
+    primaryStage.setResizable(false);
+    primaryStage.setTitle("Milky Way");
+    showData(primaryStage);
+    primaryStage.show();
+  }
 
   private void readCSV() {
 
@@ -90,33 +114,6 @@ public class Main extends Application {
 
   }
 
-  private void underliner(Button target, Button b1, Button b2, Button b3, Button b4) {
-    if (b1.isUnderline()) {
-      b1.setUnderline(false);
-    }
-    if (b2.isUnderline()) {
-      b2.setUnderline(false);
-    }
-    if (b3.isUnderline()) {
-      b3.setUnderline(false);
-    }
-    if (b4.isUnderline()) {
-      b4.setUnderline(false);
-    }
-    if (!target.isUnderline()) {
-      target.setUnderline(true);
-    }
-  }
-
-
-  @Override
-  public void start(Stage primaryStage) throws Exception {
-    primaryStage.setResizable(false);
-    primaryStage.setTitle("Milky Way");
-    showData(primaryStage);
-    primaryStage.show();
-  }
-
   private PieChart chartMaker(String chartName) {
     // temp pie-chart
     ObservableList<PieChart.Data> pieChartData =
@@ -129,7 +126,6 @@ public class Main extends Application {
     return pieChart;
   }
 
-  
   private void setupScene(Stage primaryStage) {
     root = new BorderPane();
     mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -145,31 +141,30 @@ public class Main extends Application {
     rightL = new Label[] {new Label(), new Label()};
     // Action Event: Buttons
     leftB[0].setOnAction(e -> {
-      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
       showData(primaryStage);
     });
     leftB[1].setOnAction(e -> {
-      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
       showFarm(primaryStage);
+
     });
     leftB[2].setOnAction(e -> {
-      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
       showAnnual(primaryStage);
+
     });
     leftB[3].setOnAction(e -> {
-      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
       showMonthly(primaryStage);
+
     });
     leftB[4].setOnAction(e -> {
-      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
       showRange(primaryStage);
+
     });
 
     // left-top
     leftTop.setPadding(new Insets(10));
     leftTop.setSpacing(10);
     leftTop.getChildren().addAll(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
-    
+
     leftPanel.getChildren().addAll(leftTop, csvTable);
     root.setLeft(leftPanel);
     rightPanel.setPadding(new Insets(10));
@@ -180,10 +175,9 @@ public class Main extends Application {
 
   private void showData(Stage primaryStage) {
     setupScene(primaryStage);
-    leftB[0].setUnderline(true);
+    underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
 
     // leftPanel
-
     TableColumn<Farm, String> f1 = new TableColumn<>("FARM");
     f1.setCellValueFactory(new PropertyValueFactory<>("f1"));
     TableColumn<Farm, String> f2 = new TableColumn<>("DATE");
@@ -231,28 +225,28 @@ public class Main extends Application {
 
   private void showFarm(Stage primaryStage) {
     setupScene(primaryStage);
-    leftB[1].setUnderline(true);
+    underliner(leftB[1], leftB[0], leftB[2], leftB[3], leftB[4]);
 
     primaryStage.setScene(mainScene);
   }
 
   private void showAnnual(Stage primaryStage) {
     setupScene(primaryStage);
-    leftB[2].setUnderline(true);
+    underliner(leftB[2], leftB[0], leftB[1], leftB[3], leftB[4]);
 
     primaryStage.setScene(mainScene);
   }
 
   private void showMonthly(Stage primaryStage) {
     setupScene(primaryStage);
-    leftB[3].setUnderline(true);
+    underliner(leftB[3], leftB[0], leftB[1], leftB[2], leftB[4]);
 
     primaryStage.setScene(mainScene);
   }
 
   private void showRange(Stage primaryStage) {
     setupScene(primaryStage);
-    leftB[4].setUnderline(true);
+    underliner(leftB[4], leftB[0], leftB[1], leftB[2], leftB[3]);
 
     primaryStage.setScene(mainScene);
   }
