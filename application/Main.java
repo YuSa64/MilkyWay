@@ -43,7 +43,7 @@ public class Main extends Application {
   private TableView<Farm> csvTable;
   private PieChart farmChart;
   private PieChart monthChart;
-  private Label rP_Label;
+  private Label rP_Label = new Label();
   Button[] leftB;
   Label[] rightL;
   private ObservableList<Farm> dataList = FXCollections.observableArrayList();
@@ -120,7 +120,7 @@ public class Main extends Application {
     return pieChart;
   }
 
-  private void setupScene() {
+  private void setupScene(Stage primaryStage) {
     root = new BorderPane();
     mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
     leftPanel = new VBox();
@@ -128,10 +128,31 @@ public class Main extends Application {
     rightTop = new HBox();
     rightPanel = new VBox();
     csvTable = new TableView<>();
-    rP_Label = new Label("Data Pressed");
     leftB = new Button[] {new Button("DATA"), new Button("FARM"), new Button("ANNUAL"),
         new Button("MONTHLY"), new Button("RANGE")};
     rightL = new Label[] {new Label(), new Label()};
+    // Action Event: Buttons
+    leftB[0].setOnAction(e -> {
+      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+      showData(primaryStage);
+      primaryStage.setScene(mainScene);
+    });
+    leftB[1].setOnAction(e -> {
+      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+      showFarm();
+    });
+    leftB[2].setOnAction(e -> {
+      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+      showAnnual();
+    });
+    leftB[3].setOnAction(e -> {
+      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+      showMonthly();
+    });
+    leftB[4].setOnAction(e -> {
+      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+      showRange();
+    });
   }
 
   private void setupLeft(Stage primaryStage) {
@@ -214,32 +235,7 @@ public class Main extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    // root = new GridPane();
-    setupScene();
-    setupLeft(primaryStage);
-    setupRight(primaryStage);
-
-    // Action Event: Buttons
-    leftB[0].setOnAction(e -> {
-      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
-      showData();
-    });
-    leftB[1].setOnAction(e -> {
-      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
-      showFarm();
-    });
-    leftB[2].setOnAction(e -> {
-      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
-      showAnnual();
-    });
-    leftB[3].setOnAction(e -> {
-      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
-      showMonthly();
-    });
-    leftB[4].setOnAction(e -> {
-      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
-      showRange();
-    });
+    showData(primaryStage);
 
     primaryStage.setResizable(false);
     primaryStage.setTitle("Milky Way");
@@ -247,8 +243,11 @@ public class Main extends Application {
     primaryStage.show();
   }
 
-  private void showData() {
+  private void showData(Stage primaryStage) {
     rP_Label.setText("Data Pressed");
+    setupScene(primaryStage);
+    setupLeft(primaryStage);
+    setupRight(primaryStage);
   }
 
   private void showFarm() {
