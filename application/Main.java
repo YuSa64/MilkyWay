@@ -44,33 +44,11 @@ public class Main extends Application {
   private PieChart farmChart;
   private PieChart monthChart;
   private Label rP_Label;
+  Button[] leftB;
+  Label[] rightL;
   private ObservableList<Farm> dataList = FXCollections.observableArrayList();
 
-  public class Farm {
-    // Assume each record have 6 elements, all String
 
-    private SimpleStringProperty f1, f2;
-    private SimpleIntegerProperty f3;
-
-    public String getF1() {
-      return f1.get();
-    }
-
-    public String getF2() {
-      return f2.get();
-    }
-
-    public int getF3() {
-      return f3.get();
-    }
-
-    Farm(String farm_id, String date, int weight) {
-      this.f1 = new SimpleStringProperty(farm_id);
-      this.f2 = new SimpleStringProperty(date);
-      this.f3 = new SimpleIntegerProperty(weight);
-    }
-
-  }
 
   private void readCSV() {
 
@@ -142,9 +120,7 @@ public class Main extends Application {
     return pieChart;
   }
 
-  @Override
-  public void start(Stage primaryStage) throws Exception {
-    // root = new GridPane();
+  private void setupScene() {
     root = new BorderPane();
     mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
     leftPanel = new VBox();
@@ -152,131 +128,23 @@ public class Main extends Application {
     rightTop = new HBox();
     rightPanel = new VBox();
     csvTable = new TableView<>();
-    Button b_data = new Button("DATA"), b_farm = new Button("FARM"),
-        b_annual = new Button("ANNUAL"), b_monthly = new Button("MONTHLY"),
-        b_range = new Button("RANGE");
     rP_Label = new Label("Data Pressed");
-    b_data.setUnderline(true);
+    leftB = new Button[] {new Button("DATA"), new Button("FARM"), new Button("ANNUAL"),
+        new Button("MONTHLY"), new Button("RANGE")};
+    rightL = new Label[] {new Label(), new Label()};
+  }
+
+  private void setupLeft(Stage primaryStage) {
+    leftB[0].setUnderline(true);
 
     // left-top
     leftTop.setPadding(new Insets(10));
     leftTop.setSpacing(10);
-    leftTop.getChildren().addAll(b_data, b_farm, b_annual, b_monthly, b_range);
-
-    // right-top
-    Label d_label = new Label("Date");
-    d_label.prefWidthProperty().bind(rightTop.widthProperty().divide(4).multiply(3));
-    d_label.setFont(new Font(d_label.getFont().getName(), 20));
-    Label f_label = new Label("Farm ID");
-    f_label.prefWidthProperty().bind(rightTop.widthProperty().divide(4));
-    f_label.setFont(new Font(f_label.getFont().getName(), 20));
-    rightTop.getChildren().addAll(d_label, f_label);
-
-    // data grid 1
-    GridPane d_grid1 = new GridPane();
-    d_grid1.setHgap(10);
-    d_grid1.setVgap(10);
-    Label year = new Label("YEAR");
-    year.setStyle("-fx-border-color: black;");
-    year.setPadding(new Insets(5));
-    year.prefWidthProperty().bind(d_grid1.widthProperty().divide(8));
-    Label month = new Label("MONTH");
-    month.setStyle("-fx-border-color: black;");
-    month.setPadding(new Insets(5));
-    month.prefWidthProperty().bind(d_grid1.widthProperty().divide(4));
-    Label day = new Label("DAY");
-    day.setStyle("-fx-border-color: black;");
-    day.setPadding(new Insets(5));
-    day.prefWidthProperty().bind(d_grid1.widthProperty().divide(8));
-    Label id = new Label("#");
-    id.setStyle("-fx-border-color: black;");
-    id.setPadding(new Insets(5));
-    id.prefWidthProperty().bind(d_grid1.widthProperty().divide(8));
-    d_grid1.add(year, 0, 0);
-    d_grid1.add(month, 1, 0);
-    d_grid1.add(day, 2, 0);
-    d_grid1.add(id, 10, 0);
-
-    // data grid 2
-    GridPane d_grid2 = new GridPane();
-    d_grid2.setHgap(10);
-    d_grid2.setVgap(10);
-    Label w_label = new Label("Weight");
-    w_label.prefWidthProperty().bind(d_grid2.widthProperty().divide(2));
-    w_label.setFont(new Font(w_label.getFont().getName(), 20));
-    Label wt = new Label("(weight)");
-    wt.setStyle("-fx-border-color: black;");
-    wt.setPadding(new Insets(5));
-    wt.prefWidthProperty().bind(d_grid2.widthProperty().divide(3));
-    Button add = new Button("ADD");
-    Button edit = new Button("EDIT");
-    Button remove = new Button("REMOVE");
-    d_grid2.add(w_label, 0, 0);
-    d_grid2.add(wt, 0, 1);
-    d_grid2.add(add, 1, 1);
-    d_grid2.add(edit, 2, 1);
-    d_grid2.add(remove, 3, 1);
-
-    // data grid 3
-    GridPane d_grid3 = new GridPane();
-    d_grid3.setHgap(10);
-    d_grid3.setVgap(10);
-    Label s_label = new Label("Statistic");
-    s_label.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    s_label.setFont(new Font(d_label.getFont().getName(), 20));
-    farmChart = chartMaker("FARM");
-    monthChart = chartMaker("MONTH");
-    farmChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    monthChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    d_grid3.add(s_label, 0, 0);
-    d_grid3.add(farmChart, 0, 1);
-    d_grid3.add(monthChart, 1, 1);
-
-    // data HBox bottom
-    rightBottom = new HBox();
-    Label totalWt = new Label("Total Weight:");
-    Label total = new Label("(total)");
-    totalWt.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
-    totalWt.setFont(new Font(f_label.getFont().getName(), 16));
-    total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
-    total.setFont(new Font(f_label.getFont().getName(), 16));
-    rightBottom.getChildren().addAll(totalWt, total);
-    root.setPadding(new Insets(10));
-
+    leftTop.getChildren().addAll(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+    
     // leftPanel
     leftPanel.getChildren().addAll(leftTop, csvTable);
-
-    // rightPanel
-    rightPanel.setPadding(new Insets(10));
-    rightPanel.setSpacing(10);
-    rightPanel.getChildren().addAll(rP_Label, rightTop, d_grid1, d_grid2, d_grid3, rightBottom);
-
-
-    root.setLeft(leftPanel);
-    root.setCenter(rightPanel);
-
-    // Action Event: Buttons
-    b_data.setOnAction(e -> {
-      underliner(b_data, b_farm, b_annual, b_monthly, b_range);
-      showData();
-    });
-    b_farm.setOnAction(e -> {
-      underliner(b_farm, b_data, b_annual, b_monthly, b_range);
-      showFarm();
-    });
-    b_annual.setOnAction(e -> {
-      underliner(b_annual, b_farm, b_data, b_monthly, b_range);
-      showAnnual();
-    });
-    b_monthly.setOnAction(e -> {
-      underliner(b_monthly, b_farm, b_data, b_annual, b_range);
-      showMonthly();
-    });
-    b_range.setOnAction(e -> {
-      underliner(b_range, b_farm, b_data, b_annual, b_monthly);
-      showRange();
-    });
-
+    
     TableColumn<Farm, String> f1 = new TableColumn<>("FARM");
     f1.setCellValueFactory(new PropertyValueFactory<>("f1"));
     TableColumn<Farm, String> f2 = new TableColumn<>("DATE");
@@ -291,10 +159,87 @@ public class Main extends Application {
 
     csvTable.prefHeightProperty().bind(primaryStage.heightProperty());
     csvTable.prefWidthProperty()
-        .bind(b_data.widthProperty().add(b_farm.widthProperty()).add(b_annual.widthProperty())
-            .add(b_monthly.widthProperty()).add(b_range.widthProperty()).add(60));
+        .bind(leftB[0].widthProperty().add(leftB[1].widthProperty()).add(leftB[2].widthProperty())
+            .add(leftB[3].widthProperty()).add(leftB[4].widthProperty()).add(60));
 
     readCSV();
+    root.setLeft(leftPanel);
+  }
+
+  private void setupRight(Stage primaryStage) {
+    // right-top
+    rightL[0] = new Label("Date");
+    rightL[0].prefWidthProperty().bind(rightTop.widthProperty().divide(4).multiply(3));
+    rightL[0].setFont(new Font(rightL[0].getFont().getName(), 20));
+    rightL[1] = new Label("Farm ID");
+    rightL[1].prefWidthProperty().bind(rightTop.widthProperty().divide(4));
+    rightL[1].setFont(new Font(rightL[1].getFont().getName(), 20));
+    rightTop.getChildren().addAll(rightL[0], rightL[1]);
+    
+ // data grid 3
+    GridPane d_grid3 = new GridPane();
+    d_grid3.setHgap(10);
+    d_grid3.setVgap(10);
+    Label s_label = new Label("Statistic");
+    s_label.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
+    s_label.setFont(new Font(rightL[0].getFont().getName(), 20));
+    farmChart = chartMaker("FARM");
+    monthChart = chartMaker("MONTH");
+    farmChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
+    monthChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
+    d_grid3.add(s_label, 0, 0);
+    d_grid3.add(farmChart, 0, 1);
+    d_grid3.add(monthChart, 1, 1);
+
+    // data HBox bottom
+    rightBottom = new HBox();
+    Label totalWt = new Label("Total Weight:");
+    Label total = new Label("(total)");
+    totalWt.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
+    totalWt.setFont(new Font(rightL[1].getFont().getName(), 16));
+    total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
+    total.setFont(new Font(rightL[1].getFont().getName(), 16));
+    rightBottom.getChildren().addAll(totalWt, total);
+    root.setPadding(new Insets(10));
+
+
+
+    // rightPanel
+    rightPanel.setPadding(new Insets(10));
+    rightPanel.setSpacing(10);
+    rightPanel.getChildren().addAll(rP_Label, rightTop, d_grid3, rightBottom);
+    
+    root.setCenter(rightPanel);
+  }
+
+  @Override
+  public void start(Stage primaryStage) throws Exception {
+    // root = new GridPane();
+    setupScene();
+    setupLeft(primaryStage);
+    setupRight(primaryStage);
+
+    // Action Event: Buttons
+    leftB[0].setOnAction(e -> {
+      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+      showData();
+    });
+    leftB[1].setOnAction(e -> {
+      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+      showFarm();
+    });
+    leftB[2].setOnAction(e -> {
+      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+      showAnnual();
+    });
+    leftB[3].setOnAction(e -> {
+      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+      showMonthly();
+    });
+    leftB[4].setOnAction(e -> {
+      underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+      showRange();
+    });
 
     primaryStage.setResizable(false);
     primaryStage.setTitle("Milky Way");
