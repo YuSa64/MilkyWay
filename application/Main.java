@@ -130,42 +130,40 @@ public class Main extends Application {
     csvTable = new TableView<>();
     leftB = new Button[] {new Button("DATA"), new Button("FARM"), new Button("ANNUAL"),
         new Button("MONTHLY"), new Button("RANGE")};
+    for(Button b: leftB) b.setFocusTraversable(false);
     rightL = new Label[] {new Label(), new Label()};
     // Action Event: Buttons
     leftB[0].setOnAction(e -> {
       underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
       showData(primaryStage);
-      primaryStage.setScene(mainScene);
     });
     leftB[1].setOnAction(e -> {
       underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
-      showFarm();
+      showFarm(primaryStage);
     });
     leftB[2].setOnAction(e -> {
       underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
-      showAnnual();
+      showAnnual(primaryStage);
     });
     leftB[3].setOnAction(e -> {
       underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
-      showMonthly();
+      showMonthly(primaryStage);
     });
     leftB[4].setOnAction(e -> {
       underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
-      showRange();
+      showRange(primaryStage);
     });
   }
 
   private void setupLeft(Stage primaryStage) {
-    leftB[0].setUnderline(true);
-
     // left-top
     leftTop.setPadding(new Insets(10));
     leftTop.setSpacing(10);
     leftTop.getChildren().addAll(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
-    
+
     // leftPanel
     leftPanel.getChildren().addAll(leftTop, csvTable);
-    
+
     TableColumn<Farm, String> f1 = new TableColumn<>("FARM");
     f1.setCellValueFactory(new PropertyValueFactory<>("f1"));
     TableColumn<Farm, String> f2 = new TableColumn<>("DATE");
@@ -177,7 +175,7 @@ public class Main extends Application {
     f3.prefWidthProperty().bind(csvTable.widthProperty().divide(6).multiply(3));
     csvTable.getColumns().addAll(f1, f2, f3);
     csvTable.setItems(dataList);
-
+    csvTable.setFocusTraversable(false);
     csvTable.prefHeightProperty().bind(primaryStage.heightProperty());
     csvTable.prefWidthProperty()
         .bind(leftB[0].widthProperty().add(leftB[1].widthProperty()).add(leftB[2].widthProperty())
@@ -188,16 +186,7 @@ public class Main extends Application {
   }
 
   private void setupRight(Stage primaryStage) {
-    // right-top
-    rightL[0] = new Label("Date");
-    rightL[0].prefWidthProperty().bind(rightTop.widthProperty().divide(4).multiply(3));
-    rightL[0].setFont(new Font(rightL[0].getFont().getName(), 20));
-    rightL[1] = new Label("Farm ID");
-    rightL[1].prefWidthProperty().bind(rightTop.widthProperty().divide(4));
-    rightL[1].setFont(new Font(rightL[1].getFont().getName(), 20));
-    rightTop.getChildren().addAll(rightL[0], rightL[1]);
-    
- // data grid 3
+    // data grid 3
     GridPane d_grid3 = new GridPane();
     d_grid3.setHgap(10);
     d_grid3.setVgap(10);
@@ -229,7 +218,7 @@ public class Main extends Application {
     rightPanel.setPadding(new Insets(10));
     rightPanel.setSpacing(10);
     rightPanel.getChildren().addAll(rP_Label, rightTop, d_grid3, rightBottom);
-    
+
     root.setCenter(rightPanel);
   }
 
@@ -246,24 +235,46 @@ public class Main extends Application {
   private void showData(Stage primaryStage) {
     rP_Label.setText("Data Pressed");
     setupScene(primaryStage);
+    leftB[0].setUnderline(true);
     setupLeft(primaryStage);
     setupRight(primaryStage);
+    primaryStage.setScene(mainScene);
   }
 
-  private void showFarm() {
+  private void showFarm(Stage primaryStage) {
     rP_Label.setText("Farm Pressed");
+    setupScene(primaryStage);
+    leftB[1].setUnderline(true);
+    setupLeft(primaryStage);
+    setupRight(primaryStage);
+    primaryStage.setScene(mainScene);
   }
 
-  private void showAnnual() {
+  private void showAnnual(Stage primaryStage) {
     rP_Label.setText("Annual Pressed");
+    setupScene(primaryStage);
+    leftB[2].setUnderline(true);
+    setupLeft(primaryStage);
+    setupRight(primaryStage);
+    primaryStage.setScene(mainScene);
   }
 
-  private void showMonthly() {
+  private void showMonthly(Stage primaryStage) {
     rP_Label.setText("Monthly Pressed");
+    setupScene(primaryStage);
+    leftB[3].setUnderline(true);
+    setupLeft(primaryStage);
+    setupRight(primaryStage);
+    primaryStage.setScene(mainScene);
   }
 
-  private void showRange() {
+  private void showRange(Stage primaryStage) {
     rP_Label.setText("Range Pressed");
+    setupScene(primaryStage);
+    leftB[4].setUnderline(true);
+    setupLeft(primaryStage);
+    setupRight(primaryStage);
+    primaryStage.setScene(mainScene);
   }
 
   public static void main(String[] args) {
