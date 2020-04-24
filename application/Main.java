@@ -46,6 +46,7 @@ public class Main extends Application {
   Button[] leftB;
   Label[] rightL;
   private ObservableList<Farm> dataList = FXCollections.observableArrayList();
+  
 
 
 
@@ -107,6 +108,15 @@ public class Main extends Application {
     }
   }
 
+
+  @Override
+  public void start(Stage primaryStage) throws Exception {
+    primaryStage.setResizable(false);
+    primaryStage.setTitle("Milky Way");
+    showData(primaryStage);
+    primaryStage.show();
+  }
+
   private PieChart chartMaker(String chartName) {
     // temp pie-chart
     ObservableList<PieChart.Data> pieChartData =
@@ -119,14 +129,7 @@ public class Main extends Application {
     return pieChart;
   }
 
-  @Override
-  public void start(Stage primaryStage) throws Exception {
-    primaryStage.setResizable(false);
-    primaryStage.setTitle("Milky Way");
-    showData(primaryStage);
-    primaryStage.show();
-  }
-
+  
   private void setupScene(Stage primaryStage) {
     root = new BorderPane();
     mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -198,7 +201,6 @@ public class Main extends Application {
         .bind(leftB[0].widthProperty().add(leftB[1].widthProperty()).add(leftB[2].widthProperty())
             .add(leftB[3].widthProperty()).add(leftB[4].widthProperty()).add(60));
     readCSV();
-
 
     // rightPanel
     GridPane d_grid3 = new GridPane();
