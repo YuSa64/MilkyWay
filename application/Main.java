@@ -43,7 +43,6 @@ public class Main extends Application {
   private TableView<Farm> csvTable;
   private PieChart farmChart;
   private PieChart monthChart;
-  private Label rP_Label = new Label();
   Button[] leftB;
   Label[] rightL;
   private ObservableList<Farm> dataList = FXCollections.observableArrayList();
@@ -120,6 +119,14 @@ public class Main extends Application {
     return pieChart;
   }
 
+  @Override
+  public void start(Stage primaryStage) throws Exception {
+    primaryStage.setResizable(false);
+    primaryStage.setTitle("Milky Way");
+    showData(primaryStage);
+    primaryStage.show();
+  }
+
   private void setupScene(Stage primaryStage) {
     root = new BorderPane();
     mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -130,7 +137,8 @@ public class Main extends Application {
     csvTable = new TableView<>();
     leftB = new Button[] {new Button("DATA"), new Button("FARM"), new Button("ANNUAL"),
         new Button("MONTHLY"), new Button("RANGE")};
-    for(Button b: leftB) b.setFocusTraversable(false);
+    for (Button b : leftB)
+      b.setFocusTraversable(false);
     rightL = new Label[] {new Label(), new Label()};
     // Action Event: Buttons
     leftB[0].setOnAction(e -> {
@@ -153,16 +161,25 @@ public class Main extends Application {
       underliner(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
       showRange(primaryStage);
     });
-  }
 
-  private void setupLeft(Stage primaryStage) {
     // left-top
     leftTop.setPadding(new Insets(10));
     leftTop.setSpacing(10);
     leftTop.getChildren().addAll(leftB[0], leftB[1], leftB[2], leftB[3], leftB[4]);
+    
+    leftPanel.getChildren().addAll(leftTop, csvTable);
+    root.setLeft(leftPanel);
+    rightPanel.setPadding(new Insets(10));
+    rightPanel.setSpacing(10);
+    root.setCenter(rightPanel);
+    root.setPadding(new Insets(10));
+  }
+
+  private void showData(Stage primaryStage) {
+    setupScene(primaryStage);
+    leftB[0].setUnderline(true);
 
     // leftPanel
-    leftPanel.getChildren().addAll(leftTop, csvTable);
 
     TableColumn<Farm, String> f1 = new TableColumn<>("FARM");
     f1.setCellValueFactory(new PropertyValueFactory<>("f1"));
@@ -180,13 +197,10 @@ public class Main extends Application {
     csvTable.prefWidthProperty()
         .bind(leftB[0].widthProperty().add(leftB[1].widthProperty()).add(leftB[2].widthProperty())
             .add(leftB[3].widthProperty()).add(leftB[4].widthProperty()).add(60));
-
     readCSV();
-    root.setLeft(leftPanel);
-  }
 
-  private void setupRight(Stage primaryStage) {
-    // data grid 3
+
+    // rightPanel
     GridPane d_grid3 = new GridPane();
     d_grid3.setHgap(10);
     d_grid3.setVgap(10);
@@ -200,8 +214,6 @@ public class Main extends Application {
     d_grid3.add(s_label, 0, 0);
     d_grid3.add(farmChart, 0, 1);
     d_grid3.add(monthChart, 1, 1);
-
-    // data HBox bottom
     rightBottom = new HBox();
     Label totalWt = new Label("Total Weight:");
     Label total = new Label("(total)");
@@ -210,70 +222,36 @@ public class Main extends Application {
     total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
     total.setFont(new Font(rightL[1].getFont().getName(), 16));
     rightBottom.getChildren().addAll(totalWt, total);
-    root.setPadding(new Insets(10));
+    rightPanel.getChildren().addAll(rightTop, d_grid3, rightBottom);
 
-
-
-    // rightPanel
-    rightPanel.setPadding(new Insets(10));
-    rightPanel.setSpacing(10);
-    rightPanel.getChildren().addAll(rP_Label, rightTop, d_grid3, rightBottom);
-
-    root.setCenter(rightPanel);
-  }
-
-  @Override
-  public void start(Stage primaryStage) throws Exception {
-    showData(primaryStage);
-
-    primaryStage.setResizable(false);
-    primaryStage.setTitle("Milky Way");
-    primaryStage.setScene(mainScene);
-    primaryStage.show();
-  }
-
-  private void showData(Stage primaryStage) {
-    rP_Label.setText("Data Pressed");
-    setupScene(primaryStage);
-    leftB[0].setUnderline(true);
-    setupLeft(primaryStage);
-    setupRight(primaryStage);
     primaryStage.setScene(mainScene);
   }
 
   private void showFarm(Stage primaryStage) {
-    rP_Label.setText("Farm Pressed");
     setupScene(primaryStage);
     leftB[1].setUnderline(true);
-    setupLeft(primaryStage);
-    setupRight(primaryStage);
+
     primaryStage.setScene(mainScene);
   }
 
   private void showAnnual(Stage primaryStage) {
-    rP_Label.setText("Annual Pressed");
     setupScene(primaryStage);
     leftB[2].setUnderline(true);
-    setupLeft(primaryStage);
-    setupRight(primaryStage);
+
     primaryStage.setScene(mainScene);
   }
 
   private void showMonthly(Stage primaryStage) {
-    rP_Label.setText("Monthly Pressed");
     setupScene(primaryStage);
     leftB[3].setUnderline(true);
-    setupLeft(primaryStage);
-    setupRight(primaryStage);
+
     primaryStage.setScene(mainScene);
   }
 
   private void showRange(Stage primaryStage) {
-    rP_Label.setText("Range Pressed");
     setupScene(primaryStage);
     leftB[4].setUnderline(true);
-    setupLeft(primaryStage);
-    setupRight(primaryStage);
+
     primaryStage.setScene(mainScene);
   }
 
