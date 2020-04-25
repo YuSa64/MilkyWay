@@ -29,12 +29,13 @@ public class FarmReport {
 
   public List<Farm> getAllList() {
     List<Farm> output = new ArrayList<Farm>(dataSet);
-    return sortID(sortDate(output));
+    return sortF1(sortF2(output));
   }
 
   public int getSum() {
+    ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
     int output = 0;
-    for (Farm f : dataSet)
+    for (Farm f : list)
       output += f.getF3();
     return output;
   }
@@ -48,53 +49,55 @@ public class FarmReport {
     return null;
   }
 
-  public List<Farm> getIDSum() {
+  public List<Farm> getFarmSum() {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String, Integer> map = new HashMap<String, Integer>();
-    for (Farm f : dataSet) {
-      if (!map.containsKey(f.getF1()))
-        map.put(f.getF1(), f.getF3());
+    ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
+    for (Farm f : list) {
+      String key = f.getF2().substring(0, 7);
+      if (!map.containsKey(key))
+        map.put(key, f.getF3());
       else
-        map.replace(f.getF1(), map.get(f.getF1()) + f.getF3());
+        map.replace(key, map.get(key) + f.getF3());
     }
     for (Map.Entry<String, Integer> e : map.entrySet()) {
       output.add(new Farm(e.getKey(), "", e.getValue()));
     }
-    return sortID(output);
+    return sortF1(output);
   }
 
-  private List<Farm> sortID(List<Farm> list) {
-    ArrayList<Farm> temp = new ArrayList<Farm>(list);
-    ArrayList<Farm> output = new ArrayList<Farm>();
-    for (int i = 0; i < temp.size(); i++) {
-      Farm smallestFarm = temp.get(i);
-      for (int j = i; j < temp.size(); j++) {
-        if (temp.get(j).getF1().compareTo(smallestFarm.getF1()) < 0)
-          smallestFarm = temp.get(j);
+  private List<Farm> sortF1(List<Farm> list) {
+    ArrayList<Farm> output = new ArrayList<Farm>(list);
+    for (int i = 0; i < output.size(); i++) {
+      int smallest = i;
+      for (int j = i; j < output.size(); j++) {
+        if (output.get(j).getF1().compareTo(output.get(smallest).getF1()) < 0)
+          smallest = j;
       }
-      temp.remove(smallestFarm);
-      output.add(smallestFarm);
+      Farm temp = output.get(smallest);
+      output.set(smallest, output.get(i));
+      output.set(i, temp);
     }
     return output;
   }
 
-  private List<Farm> sortDate(List<Farm> list) {
-    ArrayList<Farm> temp = new ArrayList<Farm>(list);
-    ArrayList<Farm> output = new ArrayList<Farm>();
-    for (int i = 0; i < temp.size(); i++) {
-      Farm smallestFarm = temp.get(i);
-      for (int j = i; j < temp.size(); j++) {
-        if (temp.get(j).getF2().compareTo(smallestFarm.getF2()) < 0)
-          smallestFarm = temp.get(j);
+  private List<Farm> sortF2(List<Farm> list) {
+    ArrayList<Farm> output = new ArrayList<Farm>(list);
+    for (int i = 0; i < output.size(); i++) {
+      int smallest = i;
+      for (int j = i; j < output.size(); j++) {
+        if (output.get(j).getF2().compareTo(output.get(smallest).getF2()) < 0)
+          smallest = j;
       }
-      temp.remove(smallestFarm);
-      output.add(smallestFarm);
+      Farm temp = output.get(smallest);
+      output.set(smallest, output.get(i));
+      output.set(i, temp);
     }
     return output;
   }
 
   public void readCSV(String CsvFile) {
-
+    
     // TODO: change filePath to your own path
     String FieldDelimiter = ",";
     BufferedReader br;
@@ -117,6 +120,8 @@ public class FarmReport {
           }
 
           String[] tempDate = date.split("-");
+          while (tempDate[1].length() < 2)
+            tempDate[1] = "0" + tempDate[1];
           while (tempDate[2].length() < 2)
             tempDate[2] = "0" + tempDate[2];
           String inDate = tempDate[0] + "-" + tempDate[1] + "-" + tempDate[2];

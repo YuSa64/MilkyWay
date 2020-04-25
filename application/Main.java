@@ -38,6 +38,7 @@ public class Main extends Application {
   private FarmReport report;
   private Button[] topB;
   private FileChooser fileChooser;
+  private Label total;
   private Button Cfile;
   private ObservableList<Farm> dataList;
 
@@ -66,6 +67,7 @@ public class Main extends Application {
     primaryStage.setResizable(false);
     primaryStage.setTitle("Milky Way");
     report = new FarmReport();
+    total = new Label();
     dataList = FXCollections.observableArrayList(report.getAllList());
     showData(primaryStage);
     primaryStage.show();
@@ -93,6 +95,7 @@ public class Main extends Application {
     rightPanel = new VBox();
     topB = new Button[] {new Button("DATA"), new Button("FARM"), new Button("ANNUAL"),
         new Button("MONTHLY"), new Button("RANGE")};
+    
     csvTable = new TableView<>();
     csvTable.setItems(dataList);
     csvTable.setFocusTraversable(false);
@@ -123,15 +126,14 @@ public class Main extends Application {
       showRange(primaryStage);
     });
 
-    // left-top
+    // leftpannel
     leftTop.setPadding(new Insets(10));
     leftTop.setSpacing(10);
     leftTop.getChildren().addAll(topB[0], topB[1], topB[2], topB[3], topB[4]);
-
     leftPanel.getChildren().addAll(leftTop, csvTable);
     root.setLeft(leftPanel);
 
-    // right-top
+    // rightpannel
     fileChooser = new FileChooser();
     fileChooser.setInitialDirectory(new File("."));
     Cfile = new Button("Select File");
@@ -142,18 +144,32 @@ public class Main extends Application {
     rightPanel.setSpacing(10);
     root.setCenter(rightPanel);
     root.setPadding(new Insets(10));
-    rightPanel.getChildren().add(rightTop);
+    rightBottom = new HBox();
+    Label totalWt = new Label("Total Weight:");
+    total.setText(report.getSum()+"");
+    totalWt.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
+    totalWt.setFont(new Font(new Label().getFont().getName(), 16));
+    total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
+    total.setFont(new Font(new Label().getFont().getName(), 16));
+    rightBottom.getChildren().addAll(totalWt, total);
+    rightPanel.getChildren().addAll(rightTop, rightBottom);
   }
 
   private void setTableColumn(String... columns) {
     TableColumn[] fn = new TableColumn[columns.length];
-    for (int i = 0; i < columns.length; i++) {
+    int i;
+    for (i = 0; i < columns.length-1; i++) {
       fn[i] = new TableColumn<>(columns[i]);
       fn[i].setCellValueFactory(new PropertyValueFactory<>("f" + (i + 1)));
       fn[i].prefWidthProperty().bind(csvTable.widthProperty()
           .divide((columns.length + 1) * columns.length / 2).multiply(i + 1));
       csvTable.getColumns().add(fn[i]);
     }
+    fn[i] = new TableColumn<>(columns[i]);
+    fn[i].setCellValueFactory(new PropertyValueFactory<>("f3"));
+    fn[i].prefWidthProperty().bind(csvTable.widthProperty()
+        .divide((columns.length + 1) * columns.length / 2).multiply(i + 1));
+    csvTable.getColumns().add(fn[i]);
   }
 
   private void showData(Stage primaryStage) {
@@ -167,6 +183,7 @@ public class Main extends Application {
       File selectedFile = fileChooser.showOpenDialog(primaryStage);
       report.readCSV(selectedFile.getPath());
       csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
+      total.setText(report.getSum()+"");
     });
 
     // Setup rightPanel
@@ -183,15 +200,7 @@ public class Main extends Application {
     d_grid3.add(s_label, 0, 0);
     d_grid3.add(farmChart, 0, 1);
     d_grid3.add(monthChart, 1, 1);
-    rightBottom = new HBox();
-    Label totalWt = new Label("Total Weight:");
-    Label total = new Label("(total)");
-    totalWt.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
-    totalWt.setFont(new Font(new Label().getFont().getName(), 16));
-    total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
-    total.setFont(new Font(new Label().getFont().getName(), 16));
-    rightBottom.getChildren().addAll(totalWt, total);
-    rightPanel.getChildren().addAll(d_grid3, rightBottom);
+    rightPanel.getChildren().add(1, d_grid3);
 
     primaryStage.setScene(mainScene);
   }
@@ -201,37 +210,17 @@ public class Main extends Application {
     underliner(topB[1], topB[0], topB[2], topB[3], topB[4]);
     
     // CSV setup
-    csvTable.setItems(dataList = FXCollections.observableArrayList(report.getIDSum()));
-    setTableColumn("FARM", "", "WEIGHT");
+    csvTable.setItems(dataList = FXCollections.observableArrayList(report.getFarmSum()));
+    setTableColumn("MONTH", "TOTAL WEIGHT");
     Cfile.setOnAction(e -> {
       File selectedFile = fileChooser.showOpenDialog(primaryStage);
       report.readCSV(selectedFile.getPath());
-      csvTable.setItems(dataList = FXCollections.observableArrayList(report.getIDSum()));
+      csvTable.setItems(dataList = FXCollections.observableArrayList(report.getFarmSum()));
+      total.setText(report.getSum()+"");
     });
 
     // Setup rightPanel
-    GridPane d_grid3 = new GridPane();
-    d_grid3.setHgap(10);
-    d_grid3.setVgap(10);
-    Label s_label = new Label("Statistic");
-    s_label.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    s_label.setFont(new Font(new Label().getFont().getName(), 20));
-    PieChart farmChart = chartMaker("FARM");
-    PieChart monthChart = chartMaker("MONTH");
-    farmChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    monthChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    d_grid3.add(s_label, 0, 0);
-    d_grid3.add(farmChart, 0, 1);
-    d_grid3.add(monthChart, 1, 1);
-    rightBottom = new HBox();
-    Label totalWt = new Label("Total Weight:");
-    Label total = new Label("(total)");
-    totalWt.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
-    totalWt.setFont(new Font(new Label().getFont().getName(), 16));
-    total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
-    total.setFont(new Font(new Label().getFont().getName(), 16));
-    rightBottom.getChildren().addAll(totalWt, total);
-    rightPanel.getChildren().addAll(d_grid3, rightBottom);
+
 
     primaryStage.setScene(mainScene);
   }
