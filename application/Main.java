@@ -40,7 +40,10 @@ public class Main extends Application {
   private HBox rightTop;
   private HBox rightBottom;
   private TableView<Farm> csvTable;
-  Button[] topB;
+  private FarmReport report;
+  private Button[] topB;
+  private FileChooser fileChooser;
+  private Button Cfile;
   private ObservableList<Farm> dataList;
 
 
@@ -95,10 +98,16 @@ public class Main extends Application {
           while (farm_id.length() < 3) {
             farm_id = "0" + farm_id;
           }
+          
+          String[] tempDate = date.split("-");
+          while(tempDate[2].length() < 2)
+            tempDate[2] = "0" + tempDate[2];
+          String inDate = tempDate[0] + "-" + tempDate[1] + "-" + tempDate[2];
+          
           weight = Integer.parseInt(pweight);
 
-          Farm record = new Farm(farm_id, date, weight);
-          dataList.add(record);
+          Farm record = new Farm(farm_id, inDate, weight);
+          report.add(record);
         }
 
       }
@@ -134,6 +143,7 @@ public class Main extends Application {
         new Button("MONTHLY"), new Button("RANGE")};
     csvTable = new TableView<>();
     csvTable.setItems(dataList);
+    report = new FarmReport();
     for (Button b : topB)
       b.setFocusTraversable(false);
 
@@ -171,21 +181,18 @@ public class Main extends Application {
     root.setPadding(new Insets(10));
 
     // right-top
-    FileChooser fileChooser = new FileChooser();
+    fileChooser = new FileChooser();
     fileChooser.setInitialDirectory(new File("."));
-    Button Cfile = new Button("Select File");
+    Cfile = new Button("Select File");
     Cfile.setFocusTraversable(false);
-    Cfile.setOnAction(e -> {
-      File selectedFile = fileChooser.showOpenDialog(primaryStage);
-      readCSV(selectedFile.getPath());
-    });
+    
     rightTop.getChildren().add(Cfile);
   }
 
   private void showData(Stage primaryStage) {
     setupScene(primaryStage);
     underliner(topB[0], topB[1], topB[2], topB[3], topB[4]);
-
+ 
     // CSV table setup
     TableColumn<Farm, String> f1 = new TableColumn<>("FARM");
     TableColumn<Farm, String> f2 = new TableColumn<>("DATE");
@@ -202,9 +209,13 @@ public class Main extends Application {
     csvTable.prefWidthProperty()
         .bind(topB[0].widthProperty().add(topB[1].widthProperty()).add(topB[2].widthProperty())
             .add(topB[3].widthProperty()).add(topB[4].widthProperty()).add(60));
+    Cfile.setOnAction(e -> {
+      File selectedFile = fileChooser.showOpenDialog(primaryStage);
+      readCSV(selectedFile.getPath());
+      csvTable.setItems(FXCollections.observableArrayList(report.getAllList()));
+    });
 
-
-    // rightPanel
+    // Setup rightPanel
     GridPane d_grid3 = new GridPane();
     d_grid3.setHgap(10);
     d_grid3.setVgap(10);
