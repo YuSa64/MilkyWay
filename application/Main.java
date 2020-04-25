@@ -65,7 +65,8 @@ public class Main extends Application {
   public void start(Stage primaryStage) throws Exception {
     primaryStage.setResizable(false);
     primaryStage.setTitle("Milky Way");
-    dataList = FXCollections.observableArrayList();
+    report = new FarmReport();
+    dataList = FXCollections.observableArrayList(report.getAllList());
     showData(primaryStage);
     primaryStage.show();
   }
@@ -94,13 +95,18 @@ public class Main extends Application {
         new Button("MONTHLY"), new Button("RANGE")};
     csvTable = new TableView<>();
     csvTable.setItems(dataList);
-    report = new FarmReport();
+    csvTable.setFocusTraversable(false);
+    csvTable.prefHeightProperty().bind(primaryStage.heightProperty());
+    csvTable.prefWidthProperty()
+        .bind(topB[0].widthProperty().add(topB[1].widthProperty()).add(topB[2].widthProperty())
+            .add(topB[3].widthProperty()).add(topB[4].widthProperty()).add(60));
     for (Button b : topB)
       b.setFocusTraversable(false);
 
     // Action Event: Buttons
     topB[0].setOnAction(e -> {
       showData(primaryStage);
+
     });
     topB[1].setOnAction(e -> {
       showFarm(primaryStage);
@@ -108,7 +114,6 @@ public class Main extends Application {
     });
     topB[2].setOnAction(e -> {
       showAnnual(primaryStage);
-
     });
     topB[3].setOnAction(e -> {
       showMonthly(primaryStage);
@@ -116,7 +121,6 @@ public class Main extends Application {
     });
     topB[4].setOnAction(e -> {
       showRange(primaryStage);
-
     });
 
     // left-top
@@ -126,10 +130,6 @@ public class Main extends Application {
 
     leftPanel.getChildren().addAll(leftTop, csvTable);
     root.setLeft(leftPanel);
-    rightPanel.setPadding(new Insets(10));
-    rightPanel.setSpacing(10);
-    root.setCenter(rightPanel);
-    root.setPadding(new Insets(10));
 
     // right-top
     fileChooser = new FileChooser();
@@ -138,6 +138,11 @@ public class Main extends Application {
     Cfile.setFocusTraversable(false);
 
     rightTop.getChildren().add(Cfile);
+    rightPanel.setPadding(new Insets(10));
+    rightPanel.setSpacing(10);
+    root.setCenter(rightPanel);
+    root.setPadding(new Insets(10));
+    rightPanel.getChildren().add(rightTop);
   }
 
   private void setTableColumn(String... columns) {
@@ -154,16 +159,14 @@ public class Main extends Application {
   private void showData(Stage primaryStage) {
     setupScene(primaryStage);
     underliner(topB[0], topB[1], topB[2], topB[3], topB[4]);
+    
+    // CSV setup
+    csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
     setTableColumn("FARM", "DATE", "WEIGHT");
-    csvTable.setFocusTraversable(false);
-    csvTable.prefHeightProperty().bind(primaryStage.heightProperty());
-    csvTable.prefWidthProperty()
-        .bind(topB[0].widthProperty().add(topB[1].widthProperty()).add(topB[2].widthProperty())
-            .add(topB[3].widthProperty()).add(topB[4].widthProperty()).add(60));
     Cfile.setOnAction(e -> {
       File selectedFile = fileChooser.showOpenDialog(primaryStage);
       report.readCSV(selectedFile.getPath());
-      csvTable.setItems(FXCollections.observableArrayList(report.getAllList()));
+      csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
     });
 
     // Setup rightPanel
@@ -188,7 +191,7 @@ public class Main extends Application {
     total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
     total.setFont(new Font(new Label().getFont().getName(), 16));
     rightBottom.getChildren().addAll(totalWt, total);
-    rightPanel.getChildren().addAll(rightTop, d_grid3, rightBottom);
+    rightPanel.getChildren().addAll(d_grid3, rightBottom);
 
     primaryStage.setScene(mainScene);
   }
@@ -196,6 +199,39 @@ public class Main extends Application {
   private void showFarm(Stage primaryStage) {
     setupScene(primaryStage);
     underliner(topB[1], topB[0], topB[2], topB[3], topB[4]);
+    
+    // CSV setup
+    csvTable.setItems(dataList = FXCollections.observableArrayList(report.getIDSum()));
+    setTableColumn("FARM", "", "WEIGHT");
+    Cfile.setOnAction(e -> {
+      File selectedFile = fileChooser.showOpenDialog(primaryStage);
+      report.readCSV(selectedFile.getPath());
+      csvTable.setItems(dataList = FXCollections.observableArrayList(report.getIDSum()));
+    });
+
+    // Setup rightPanel
+    GridPane d_grid3 = new GridPane();
+    d_grid3.setHgap(10);
+    d_grid3.setVgap(10);
+    Label s_label = new Label("Statistic");
+    s_label.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
+    s_label.setFont(new Font(new Label().getFont().getName(), 20));
+    PieChart farmChart = chartMaker("FARM");
+    PieChart monthChart = chartMaker("MONTH");
+    farmChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
+    monthChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
+    d_grid3.add(s_label, 0, 0);
+    d_grid3.add(farmChart, 0, 1);
+    d_grid3.add(monthChart, 1, 1);
+    rightBottom = new HBox();
+    Label totalWt = new Label("Total Weight:");
+    Label total = new Label("(total)");
+    totalWt.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
+    totalWt.setFont(new Font(new Label().getFont().getName(), 16));
+    total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
+    total.setFont(new Font(new Label().getFont().getName(), 16));
+    rightBottom.getChildren().addAll(totalWt, total);
+    rightPanel.getChildren().addAll(d_grid3, rightBottom);
 
     primaryStage.setScene(mainScene);
   }

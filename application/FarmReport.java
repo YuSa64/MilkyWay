@@ -5,8 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +20,10 @@ public class FarmReport {
   }
 
   public void add(Farm farm) {
+    for (Farm f : dataSet) {
+      if (f.equals(farm))
+        return;
+    }
     dataSet.add(farm);
   }
 
@@ -34,6 +40,7 @@ public class FarmReport {
   }
 
   public List<Farm> getMonthSum() {
+
     return null;
   }
 
@@ -42,7 +49,18 @@ public class FarmReport {
   }
 
   public List<Farm> getIDSum() {
-    return null;
+    ArrayList<Farm> output = new ArrayList<Farm>();
+    HashMap<String, Integer> map = new HashMap<String, Integer>();
+    for (Farm f : dataSet) {
+      if (!map.containsKey(f.getF1()))
+        map.put(f.getF1(), f.getF3());
+      else
+        map.replace(f.getF1(), map.get(f.getF1()) + f.getF3());
+    }
+    for (Map.Entry<String, Integer> e : map.entrySet()) {
+      output.add(new Farm(e.getKey(), "", e.getValue()));
+    }
+    return sortID(output);
   }
 
   private List<Farm> sortID(List<Farm> list) {
