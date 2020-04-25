@@ -39,7 +39,20 @@ public class FarmReport {
       output += f.getF3();
     return output;
   }
-
+  
+  
+  
+  public int getFarmMonthSum(Farm farm) {
+	  int output = 0;
+	  for (Farm f : dataSet) {
+		  
+		  if (farm.getF1().contentEquals(f.getF1())) {
+			  output += f.getF3();
+		  }
+	  }
+	  return output;
+  }
+  
   public List<Farm> getMonthSum() {
 
     return null;
