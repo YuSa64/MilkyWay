@@ -2,13 +2,8 @@
 
 package application;
 
-import java.io.BufferedReader;
+
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -75,50 +70,6 @@ public class Main extends Application {
     primaryStage.show();
   }
 
-  private void readCSV(String CsvFile) {
-
-    // TODO: change filePath to your own path
-    String FieldDelimiter = ",";
-
-    BufferedReader br;
-
-    try {
-      br = new BufferedReader(new FileReader(CsvFile));
-
-      String line;
-      while ((line = br.readLine()) != null) {
-        String[] fields = line.split(FieldDelimiter, -1);
-        if (!fields[1].equals("farm_id")) {
-          String farm_id = fields[1];
-          String date = fields[0];
-          String pweight = fields[2];
-          int weight = 0;
-
-          farm_id = farm_id.substring(5);
-          while (farm_id.length() < 3) {
-            farm_id = "0" + farm_id;
-          }
-          
-          String[] tempDate = date.split("-");
-          while(tempDate[2].length() < 2)
-            tempDate[2] = "0" + tempDate[2];
-          String inDate = tempDate[0] + "-" + tempDate[1] + "-" + tempDate[2];
-          
-          weight = Integer.parseInt(pweight);
-
-          Farm record = new Farm(farm_id, inDate, weight);
-          report.add(record);
-        }
-
-      }
-
-    } catch (FileNotFoundException ex) {
-      Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-      Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-    }
-
-  }
 
   private PieChart chartMaker(String chartName) {
     // temp pie-chart
@@ -185,25 +136,25 @@ public class Main extends Application {
     fileChooser.setInitialDirectory(new File("."));
     Cfile = new Button("Select File");
     Cfile.setFocusTraversable(false);
-    
+
     rightTop.getChildren().add(Cfile);
+  }
+
+  private void setTableColumn(String... columns) {
+    TableColumn[] fn = new TableColumn[columns.length];
+    for (int i = 0; i < columns.length; i++) {
+      fn[i] = new TableColumn<>(columns[i]);
+      fn[i].setCellValueFactory(new PropertyValueFactory<>("f" + (i + 1)));
+      fn[i].prefWidthProperty().bind(csvTable.widthProperty()
+          .divide((columns.length + 1) * columns.length / 2).multiply(i + 1));
+      csvTable.getColumns().add(fn[i]);
+    }
   }
 
   private void showData(Stage primaryStage) {
     setupScene(primaryStage);
     underliner(topB[0], topB[1], topB[2], topB[3], topB[4]);
- 
-    // CSV table setup
-    TableColumn<Farm, String> f1 = new TableColumn<>("FARM");
-    TableColumn<Farm, String> f2 = new TableColumn<>("DATE");
-    TableColumn<Farm, Integer> f3 = new TableColumn<>("WEIGHT");
-    f1.setCellValueFactory(new PropertyValueFactory<>("f1"));
-    f2.setCellValueFactory(new PropertyValueFactory<>("f2"));
-    f3.setCellValueFactory(new PropertyValueFactory<>("f3"));
-    f1.prefWidthProperty().bind(csvTable.widthProperty().divide(6));
-    f2.prefWidthProperty().bind(csvTable.widthProperty().divide(6).multiply(2));
-    f3.prefWidthProperty().bind(csvTable.widthProperty().divide(6).multiply(3));
-    csvTable.getColumns().addAll(f1, f2, f3);
+    setTableColumn("FARM", "DATE", "WEIGHT");
     csvTable.setFocusTraversable(false);
     csvTable.prefHeightProperty().bind(primaryStage.heightProperty());
     csvTable.prefWidthProperty()
@@ -211,7 +162,7 @@ public class Main extends Application {
             .add(topB[3].widthProperty()).add(topB[4].widthProperty()).add(60));
     Cfile.setOnAction(e -> {
       File selectedFile = fileChooser.showOpenDialog(primaryStage);
-      readCSV(selectedFile.getPath());
+      report.readCSV(selectedFile.getPath());
       csvTable.setItems(FXCollections.observableArrayList(report.getAllList()));
     });
 
