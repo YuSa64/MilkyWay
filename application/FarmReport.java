@@ -40,34 +40,59 @@ public class FarmReport {
     return output;
   }
   
-  
-  
-  public int getFarmMonthSum(Farm farm) {
-	  int output = 0;
-	  for (Farm f : dataSet) {
-		  
-		  if (farm.getF1().contentEquals(f.getF1())) {
-			  output += f.getF3();
-		  }
-	  }
-	  return output;
-  }
-  
+
+  /**
+   * Returns List of sum of each year-month.
+   * @return List of Farm(year-month, , total weight)
+   */
   public List<Farm> getMonthSum() {
-
-    return null;
-  }
-
-  public List<Farm> getYearSum() {
-    return null;
-  }
-
-  public List<Farm> getFarmSum() {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String, Integer> map = new HashMap<String, Integer>();
     ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
     for (Farm f : list) {
       String key = f.getF2().substring(0, 7);
+      if (!map.containsKey(key))
+        map.put(key, f.getF3());
+      else
+        map.replace(key, map.get(key) + f.getF3());
+    }
+    for (Map.Entry<String, Integer> e : map.entrySet()) {
+      output.add(new Farm(e.getKey(), "", e.getValue()));
+    }
+    return sortF1(output);
+  }
+
+  /**
+   * Returns List of sum of each year.
+   * @return List of Farm(year, , total weight)
+   */
+  public List<Farm> getYearSum() {
+    ArrayList<Farm> output = new ArrayList<Farm>();
+    HashMap<String, Integer> map = new HashMap<String, Integer>();
+    ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
+    for (Farm f : list) {
+      String key = f.getF2().substring(0, 4);
+      if (!map.containsKey(key))
+        map.put(key, f.getF3());
+      else
+        map.replace(key, map.get(key) + f.getF3());
+    }
+    for (Map.Entry<String, Integer> e : map.entrySet()) {
+      output.add(new Farm(e.getKey(), "", e.getValue()));
+    }
+    return sortF1(output);
+  }
+
+  /**
+   * Returns List of sum of each farm.
+   * @return List of Farm(farm_id, , total weight)
+   */
+  public List<Farm> getFarmSum() {
+    ArrayList<Farm> output = new ArrayList<Farm>();
+    HashMap<String, Integer> map = new HashMap<String, Integer>();
+    ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
+    for (Farm f : list) {
+      String key = f.getF1();
       if (!map.containsKey(key))
         map.put(key, f.getF3());
       else

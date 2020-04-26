@@ -3,6 +3,7 @@
 package application;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class Main extends Application {
 	private FileChooser fileChooser;
 	private Label total;
 	private Button Cfile;
+    PieChart farmChart;
 	private ObservableList<Farm> dataList;
 
 	private void underliner(Button target, Button b1, Button b2, Button b3, Button b4) {
@@ -69,27 +71,26 @@ public class Main extends Application {
 		report = new FarmReport();
 		total = new Label();
 		dataList = FXCollections.observableArrayList(report.getAllList());
+		farmChart = new PieChart();
 		showData(primaryStage);
 		primaryStage.show();
 	}
 
-	private PieChart chartMaker(List<Farm> farmList, String month) {
+	private void chartMaker(PieChart chart, String name) {
 
-		ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-		
-		//Because each date is a farm object 
-		HashSet<String> farmIDSet = new HashSet<String>();
+	    
+	    ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+		List<Farm> farmList = report.getFarmSum();
 		for (Farm f : farmList) {
-			if (!farmIDSet.contains(f.getF1())) {
-				pieChartData.add(new PieChart.Data(f.getF1(), report.getFarmMonthSum(f)));
-				farmIDSet.add(f.getF1());
+		  PieChart.Data d = new PieChart.Data(f.getF1(), f.getF3());
+			if (!pieChartData.contains(d)) {
+				pieChartData.add(d);
 			}
 		}
 		System.out.println(report.getSum());
-		PieChart pieChart = new PieChart(pieChartData);
-		pieChart.setTitle(month);
-		pieChart.setLabelsVisible(true);
-		return pieChart;
+		chart.setData(pieChartData);
+		chart.setTitle(name);
+		chart.setLabelsVisible(true);
 	}
 
 	private void setupScene(Stage primaryStage) {
@@ -184,12 +185,6 @@ public class Main extends Application {
 		// CSV setup
 		csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
 		setTableColumn("FARM", "DATE", "WEIGHT");
-		Cfile.setOnAction(e -> {
-			File selectedFile = fileChooser.showOpenDialog(primaryStage);
-			report.readCSV(selectedFile.getPath());
-			csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
-			total.setText(report.getSum() + "");
-		});
 
 		// Setup rightPanel
 		GridPane d_grid3 = new GridPane();
@@ -198,15 +193,22 @@ public class Main extends Application {
 		Label s_label = new Label("Statistic");
 		s_label.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
 		s_label.setFont(new Font(new Label().getFont().getName(), 20));
-		PieChart farmChart = chartMaker(report.getAllList(), "january");
-		// PieChart monthChart = chartMaker("MONTH");
 		farmChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
+		// PieChart monthChart = chartMaker("MONTH");
 		// monthChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
 		d_grid3.add(s_label, 0, 0);
 		d_grid3.add(farmChart, 0, 1);
 		// d_grid3.add(monthChart, 1, 1);
 		rightPanel.getChildren().add(1, d_grid3);
 
+		Cfile.setOnAction(e -> {
+		  File selectedFile = fileChooser.showOpenDialog(primaryStage);
+		  report.readCSV(selectedFile.getPath());
+		  csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
+		  total.setText(report.getSum() + "");
+		  chartMaker(farmChart, "FARM");
+		});
+		
 		primaryStage.setScene(mainScene);
 	}
 
@@ -215,12 +217,12 @@ public class Main extends Application {
 		underliner(topB[1], topB[0], topB[2], topB[3], topB[4]);
 
 		// CSV setup
-		csvTable.setItems(dataList = FXCollections.observableArrayList(report.getFarmSum()));
+		csvTable.setItems(dataList = FXCollections.observableArrayList(report.getMonthSum()));
 		setTableColumn("MONTH", "TOTAL WEIGHT");
 		Cfile.setOnAction(e -> {
 			File selectedFile = fileChooser.showOpenDialog(primaryStage);
 			report.readCSV(selectedFile.getPath());
-			csvTable.setItems(dataList = FXCollections.observableArrayList(report.getFarmSum()));
+			csvTable.setItems(dataList = FXCollections.observableArrayList(report.getMonthSum()));
 			total.setText(report.getSum() + "");
 		});
 
