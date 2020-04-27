@@ -6,7 +6,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -73,11 +74,11 @@ public class Main extends Application {
     chart.setTitle(name);
     chart.setLabelsVisible(true);
   }
-  
+
   private void showData(Stage primaryStage) {
     clearBoard();
     underliner(topB, 0);
-    
+
     csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
     setTableColumn("FARM", "DATE", "WEIGHT");
     d_grid.add(farmChart, 0, 1);
@@ -89,23 +90,25 @@ public class Main extends Application {
     chartMaker(farmChart, "FARM", 0);
     chartMaker(monthChart, "MONTH", 1);
     chartMaker(yearChart, "YEAR", 2);
-    
+
     Cfile.setOnAction(e -> {
+
       List<File> selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
-      for (File f : selectedFiles) {
-        report.readCSV(f.getPath());
-        csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
-        total.setText(report.getSum() + "");
-      }
+      if (selectedFiles != null)
+        for (File f : selectedFiles) {
+          report.readCSV(f);
+          csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
+          total.setText(report.getSum() + "");
+        }
       showData(primaryStage);
     });
-    
+
   }
-  
+
   private void showFarm(Stage primaryStage) {
     clearBoard();
     underliner(topB, 1);
-    
+
     csvTable.setItems(dataList = FXCollections.observableArrayList(report.getMonthSum()));
     setTableColumn("MONTH", "TOTAL WEIGHT");
     d_grid.add(monthChart, 0, 1);
@@ -114,42 +117,43 @@ public class Main extends Application {
     yearChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
     chartMaker(monthChart, "MONTH", 1);
     chartMaker(yearChart, "YEAR", 2);
-    
+
     Cfile.setOnAction(e -> {
       List<File> selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
-      for (File f : selectedFiles) {
-        report.readCSV(f.getPath());
-        csvTable.setItems(dataList = FXCollections.observableArrayList(report.getMonthSum()));
-        total.setText(report.getSum() + "");
-      }
+      if (selectedFiles != null)
+        for (File f : selectedFiles) {
+          report.readCSV(f);
+          csvTable.setItems(dataList = FXCollections.observableArrayList(report.getMonthSum()));
+          total.setText(report.getSum() + "");
+        }
       showFarm(primaryStage);
     });
-    
+
   }
-  
+
   private void showAnnual(Stage primaryStage) {
     clearBoard();
     underliner(topB, 2);
   }
-  
+
   private void showMonthly(Stage primaryStage) {
     clearBoard();
     underliner(topB, 3);
-    
+
   }
-  
+
   private void showRange(Stage primaryStage) {
     clearBoard();
     underliner(topB, 4);
-    
+
   }
 
   private void underliner(Button[] buttons, int index) {
-    for(Button b: buttons)
+    for (Button b : buttons)
       b.setUnderline(false);
     buttons[index].setUnderline(true);
   }
-  
+
   @Override
   public void start(Stage primaryStage) throws Exception {
     primaryStage.setResizable(false);
@@ -159,7 +163,7 @@ public class Main extends Application {
     primaryStage.setScene(mainScene);
     primaryStage.show();
   }
-  
+
   private void setupScene(Stage primaryStage) {
     root = new BorderPane();
     mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -270,7 +274,7 @@ public class Main extends Application {
     csvTable.getColumns().clear();
     d_grid.getChildren().clear();
   }
-  
+
 
   public static void main(String[] args) {
     launch(args);
