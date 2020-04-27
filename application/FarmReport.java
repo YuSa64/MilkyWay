@@ -50,7 +50,7 @@ public class FarmReport {
     HashMap<String, Integer> map = new HashMap<String, Integer>();
     ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
     for (Farm f : list) {
-      String key = f.getF2().substring(0, 7);
+      String key = f.getF2().substring(5, 7);
       if (!map.containsKey(key))
         map.put(key, f.getF3());
       else

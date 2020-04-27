@@ -32,19 +32,16 @@ public class Main extends Application {
   private static final int WINDOW_HEIGHT = 600;
   private BorderPane root;
   private Scene mainScene;
-  private VBox leftPanel;
-  private VBox rightPanel;
-  private HBox leftTop;
-  private HBox rightTop;
-  private HBox rightBottom;
+  private VBox leftPanel, rightPanel;
+  private HBox leftTop, rightTop, rightBottom;
   private TableView<Farm> csvTable;
   private FarmReport report;
   private Button[] topB;
   private FileChooser fileChooser;
   private Label total;
   private Button Cfile;
-  PieChart farmChart;
-  PieChart monthChart;
+  private GridPane d_grid, d_grid2;
+  private PieChart farmChart, monthChart, yearChart;
   private ObservableList<Farm> dataList;
 
   private void underliner(Button target, Button b1, Button b2, Button b3, Button b4) {
@@ -74,6 +71,7 @@ public class Main extends Application {
     dataList = FXCollections.observableArrayList(report.getAllList());
     farmChart = new PieChart();
     monthChart = new PieChart();
+    yearChart = new PieChart();
     showData(primaryStage);
     primaryStage.show();
   }
@@ -120,6 +118,9 @@ public class Main extends Application {
         new Button("MONTHLY"), new Button("RANGE")};
 
     csvTable = new TableView<>();
+    d_grid = new GridPane();
+    d_grid2 = new GridPane();
+    
     csvTable.setItems(dataList);
     csvTable.setFocusTraversable(false);
     csvTable.prefHeightProperty().bind(primaryStage.heightProperty());
@@ -175,7 +176,16 @@ public class Main extends Application {
     total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
     total.setFont(new Font(new Label().getFont().getName(), 16));
     rightBottom.getChildren().addAll(totalWt, total);
-    rightPanel.getChildren().addAll(rightTop, rightBottom);
+
+    d_grid.setHgap(10);
+    d_grid.setVgap(10);
+    d_grid2.setHgap(10);
+    d_grid2.setVgap(10);
+    Label s_label = new Label("Statistic");
+    s_label.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
+    s_label.setFont(new Font(new Label().getFont().getName(), 20));
+    d_grid.add(s_label, 0, 0);
+    rightPanel.getChildren().addAll(rightTop, d_grid, d_grid2, rightBottom);
   }
 
   private void setTableColumn(String... columns) {
@@ -204,18 +214,12 @@ public class Main extends Application {
     setTableColumn("FARM", "DATE", "WEIGHT");
 
     // Setup rightPanel
-    GridPane d_grid3 = new GridPane();
-    d_grid3.setHgap(10);
-    d_grid3.setVgap(10);
-    Label s_label = new Label("Statistic");
-    s_label.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    s_label.setFont(new Font(new Label().getFont().getName(), 20));
-    farmChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    monthChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    d_grid3.add(s_label, 0, 0);
-    d_grid3.add(farmChart, 0, 1);
-    d_grid3.add(monthChart, 1, 1);
-    rightPanel.getChildren().add(1, d_grid3);
+    farmChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
+    monthChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
+    yearChart.prefWidthProperty().bind(d_grid2.widthProperty().divide(2));
+    d_grid.add(farmChart, 0, 1);
+    d_grid.add(monthChart, 1, 1);
+    d_grid2.add(yearChart, 0, 1);
 
     Cfile.setOnAction(e -> {
       File selectedFile = fileChooser.showOpenDialog(primaryStage);
@@ -224,6 +228,7 @@ public class Main extends Application {
       total.setText(report.getSum() + "");
       chartMaker(farmChart, "FARM", 0);
       chartMaker(monthChart, "MONTH", 1);
+      chartMaker(yearChart, "YEAR", 2);
     });
 
     primaryStage.setScene(mainScene);
@@ -232,21 +237,6 @@ public class Main extends Application {
   private void showFarm(Stage primaryStage) {
     setupScene(primaryStage);
     underliner(topB[1], topB[0], topB[2], topB[3], topB[4]);
-
-    // Setup rightPanel
-    GridPane d_grid3 = new GridPane();
-    d_grid3.setHgap(10);
-    d_grid3.setVgap(10);
-    Label s_label = new Label("Statistic");
-    s_label.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    s_label.setFont(new Font(new Label().getFont().getName(), 20));
-    farmChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    // PieChart monthChart = chartMaker("MONTH");
-    // monthChart.prefWidthProperty().bind(d_grid3.widthProperty().divide(2));
-    d_grid3.add(s_label, 0, 0);
-    d_grid3.add(farmChart, 0, 1);
-    // d_grid3.add(monthChart, 1, 1);
-    rightPanel.getChildren().add(1, d_grid3);
 
     // CSV setup
     csvTable.setItems(dataList = FXCollections.observableArrayList(report.getMonthSum()));
