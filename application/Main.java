@@ -97,9 +97,9 @@ public class Main extends Application {
       if (selectedFiles != null)
         for (File f : selectedFiles) {
           report.readCSV(f);
-          csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
-          total.setText(report.getSum() + "");
         }
+      csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
+      total.setText(report.getSum() + "");
       showData(primaryStage);
     });
 
@@ -123,9 +123,9 @@ public class Main extends Application {
       if (selectedFiles != null)
         for (File f : selectedFiles) {
           report.readCSV(f);
-          csvTable.setItems(dataList = FXCollections.observableArrayList(report.getMonthSum()));
-          total.setText(report.getSum() + "");
         }
+      csvTable.setItems(dataList = FXCollections.observableArrayList(report.getMonthSum()));
+      total.setText(report.getSum() + "");
       showFarm(primaryStage);
     });
 
