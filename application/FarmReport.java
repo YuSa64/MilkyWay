@@ -137,7 +137,7 @@ public class FarmReport {
     for (Map.Entry<String[], Integer> e : map.entrySet()) {
       output.add(new Farm(e.getKey()[0], e.getKey()[1] + "-" + e.getKey()[2], e.getValue()));
     }
-    return sortF1(output);
+    return sortF1(sortF2(output));
   }
 
   private List<Farm> sortF1(List<Farm> list) {
