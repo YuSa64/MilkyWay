@@ -112,6 +112,13 @@ public class FarmReport {
     return sortF1(output);
   }
 
+  /**
+   * Return list of targeted Farms. Null for argument is equal to all.
+   * @param farm_id target farm_id (null equals all)
+   * @param year target year (null equals all)
+   * @param month target month (null equals all)
+   * @return List<Farm> with target Farm objects
+   */
   public List<Farm> getTargetSum(String farm_id, String year, String month) {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String[], Integer> map = new HashMap<String[], Integer>();
@@ -201,13 +208,11 @@ public class FarmReport {
 
     } catch (FileNotFoundException ex) {
       Alert a = new Alert(AlertType.ERROR);
-      a.setContentText(
-          "File(s) canno be found. Program halted.\n" + ex.getMessage());
+      a.setContentText("File(s) canno be found. Program halted.\n" + ex.getMessage());
       a.show();
     } catch (IOException ex) {
       Alert a = new Alert(AlertType.ERROR);
-      a.setContentText(
-          "Program halted.\n" + ex.getMessage());
+      a.setContentText("Program halted.\n" + ex.getMessage());
       a.show();
     } catch (NumberFormatException ex) {
       Alert a = new Alert(AlertType.ERROR);
