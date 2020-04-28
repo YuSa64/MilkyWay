@@ -48,16 +48,17 @@ public class FarmReport {
    * 
    * @return List of Farm(year-month, , total weight)
    */
-  public List<Farm> getMonthSum() {
+  public List<Farm> getMonthSum(String month) {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String, Integer> map = new HashMap<String, Integer>();
     ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
     for (Farm f : list) {
       String key = f.getF2().substring(5, 7);
-      if (!map.containsKey(key))
-        map.put(key, f.getF3());
-      else
-        map.replace(key, map.get(key) + f.getF3());
+      if (month == null || month.equals(key))
+        if (!map.containsKey(key))
+          map.put(key, f.getF3());
+        else
+          map.replace(key, map.get(key) + f.getF3());
     }
     for (Map.Entry<String, Integer> e : map.entrySet()) {
       output.add(new Farm(e.getKey(), "", e.getValue()));
@@ -70,16 +71,17 @@ public class FarmReport {
    * 
    * @return List of Farm(year, , total weight)
    */
-  public List<Farm> getYearSum() {
+  public List<Farm> getYearSum(String year) {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String, Integer> map = new HashMap<String, Integer>();
     ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
     for (Farm f : list) {
       String key = f.getF2().substring(0, 4);
-      if (!map.containsKey(key))
-        map.put(key, f.getF3());
-      else
-        map.replace(key, map.get(key) + f.getF3());
+      if (year == null || year.equals(key))
+        if (!map.containsKey(key))
+          map.put(key, f.getF3());
+        else
+          map.replace(key, map.get(key) + f.getF3());
     }
     for (Map.Entry<String, Integer> e : map.entrySet()) {
       output.add(new Farm(e.getKey(), "", e.getValue()));
@@ -92,19 +94,41 @@ public class FarmReport {
    * 
    * @return List of Farm(farm_id, , total weight)
    */
-  public List<Farm> getFarmSum() {
+  public List<Farm> getFarmSum(String farm_id) {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String, Integer> map = new HashMap<String, Integer>();
     ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
     for (Farm f : list) {
       String key = f.getF1();
-      if (!map.containsKey(key))
-        map.put(key, f.getF3());
-      else
-        map.replace(key, map.get(key) + f.getF3());
+      if (farm_id == null || farm_id.equals(key))
+        if (!map.containsKey(key))
+          map.put(key, f.getF3());
+        else
+          map.replace(key, map.get(key) + f.getF3());
     }
     for (Map.Entry<String, Integer> e : map.entrySet()) {
       output.add(new Farm(e.getKey(), "", e.getValue()));
+    }
+    return sortF1(output);
+  }
+
+  public List<Farm> getTargetSum(String farm_id, String year, String month) {
+    ArrayList<Farm> output = new ArrayList<Farm>();
+    HashMap<String[], Integer> map = new HashMap<String[], Integer>();
+    ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
+
+    for (Farm f : list) {
+      String key[] = {f.getF1(), f.getF2().substring(0, 4), f.getF2().substring(5, 7)};
+      if ((key[0].equals(farm_id) || farm_id == null) && (key[1].equals(year) || year == null)
+          && (key[2].equals(month) || month == null)) {
+        if (!map.containsKey(key))
+          map.put(key, f.getF3());
+        else
+          map.replace(key, map.get(key) + f.getF3());
+      }
+    }
+    for (Map.Entry<String[], Integer> e : map.entrySet()) {
+      output.add(new Farm(e.getKey()[0], e.getKey()[1] + "-" + e.getKey()[2], e.getValue()));
     }
     return sortF1(output);
   }
@@ -176,16 +200,24 @@ public class FarmReport {
       }
 
     } catch (FileNotFoundException ex) {
-      Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-      Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (NumberFormatException nfe) {
       Alert a = new Alert(AlertType.ERROR);
-      a.setContentText("File contains missing or invalid data. Program halted.\n" + nfe.getMessage());
+      a.setContentText(
+          "File(s) canno be found. Program halted.\n" + ex.getMessage());
       a.show();
-    } catch (StringIndexOutOfBoundsException nfe) {
+    } catch (IOException ex) {
       Alert a = new Alert(AlertType.ERROR);
-      a.setContentText("File contains missing or invalid data. Program halted.\n" + nfe.getMessage());
+      a.setContentText(
+          "Program halted.\n" + ex.getMessage());
+      a.show();
+    } catch (NumberFormatException ex) {
+      Alert a = new Alert(AlertType.ERROR);
+      a.setContentText(
+          "File contains missing or invalid data. Program halted.\n" + ex.getMessage());
+      a.show();
+    } catch (StringIndexOutOfBoundsException ex) {
+      Alert a = new Alert(AlertType.ERROR);
+      a.setContentText(
+          "File contains missing or invalid data. Program halted.\n" + ex.getMessage());
       a.show();
     }
 
