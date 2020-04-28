@@ -51,8 +51,7 @@ public class FarmReport {
   public List<Farm> getMonthSum(String month) {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String, Integer> map = new HashMap<String, Integer>();
-    ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
-    for (Farm f : list) {
+    for (Farm f : dataSet) {
       String key = f.getF2().substring(5, 7);
       if (month == null || month.equals(key))
         if (!map.containsKey(key))
@@ -74,8 +73,7 @@ public class FarmReport {
   public List<Farm> getYearSum(String year) {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String, Integer> map = new HashMap<String, Integer>();
-    ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
-    for (Farm f : list) {
+    for (Farm f : dataSet) {
       String key = f.getF2().substring(0, 4);
       if (year == null || year.equals(key))
         if (!map.containsKey(key))
@@ -97,8 +95,7 @@ public class FarmReport {
   public List<Farm> getFarmSum(String farm_id) {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String, Integer> map = new HashMap<String, Integer>();
-    ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
-    for (Farm f : list) {
+    for (Farm f : dataSet) {
       String key = f.getF1();
       if (farm_id == null || farm_id.equals(key))
         if (!map.containsKey(key))
@@ -122,9 +119,8 @@ public class FarmReport {
   public List<Farm> getTargetSum(String farm_id, String year, String month) {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String[], Integer> map = new HashMap<String[], Integer>();
-    ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
 
-    for (Farm f : list) {
+    for (Farm f : dataSet) {
       String key[] = {f.getF1(), f.getF2().substring(0, 4), f.getF2().substring(5, 7)};
       if ((key[0].equals(farm_id) || farm_id == null) && (key[1].equals(year) || year == null)
           && (key[2].equals(month) || month == null)) {
