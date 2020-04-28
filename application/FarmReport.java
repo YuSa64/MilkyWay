@@ -1,6 +1,7 @@
 package application;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -134,19 +135,19 @@ public class FarmReport {
     return output;
   }
 
-  public void readCSV(String CsvFile) {
+  public void readCSV(File f) {
     
-    // TODO: change filePath to your own path
     String FieldDelimiter = ",";
     BufferedReader br;
 
     try {
-      br = new BufferedReader(new FileReader(CsvFile));
+      br = new BufferedReader(new FileReader(f));
 
       String line;
       while ((line = br.readLine()) != null) {
         String[] fields = line.split(FieldDelimiter, -1);
         if (!fields[1].equals("farm_id")) {
+          
           String farm_id = fields[1];
           String date = fields[0];
           String pweight = fields[2];
@@ -165,9 +166,7 @@ public class FarmReport {
           String inDate = tempDate[0] + "-" + tempDate[1] + "-" + tempDate[2];
 
           weight = Integer.parseInt(pweight);
-
-          Farm record = new Farm(farm_id, inDate, weight);
-          add(record);
+          add(new Farm(farm_id, inDate, weight));
         }
 
       }
