@@ -3,6 +3,7 @@
 package application;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.List;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -302,7 +303,9 @@ public class Main extends Application {
     month.setPromptText("MONTH");
     day = new ComboBox<String>();
     day.setPromptText("DAY");
-    year.getItems().add("2019");
+    for(int i = 2000; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
+      year.getItems().add(i + "");
+    }
     year.setOnAction(e -> {
       month.getItems().clear();
       month.getItems().addAll("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
