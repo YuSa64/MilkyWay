@@ -42,7 +42,7 @@ public class Main extends Application {
   private PieChart farmChart, monthChart, yearChart;
   private ObservableList<Farm> dataList;
   private TextField farmID;
-  private ComboBox<String> year, month, day;
+  private ComboBox<String> year, month, day, dyear, dmonth, dday;
 
   private void chartMaker(PieChart chart, String name, int type, String... strings) {
 
@@ -92,13 +92,23 @@ public class Main extends Application {
 
     csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
     setTableColumn("FARM", "DATE", "WEIGHT");
-    
+    csvTable.getSortOrder().add(csvTable.getColumns().get(1));
+
     inputGrid.add(year, 1, 0);
     inputGrid.add(month, 2, 0);
     inputGrid.add(day, 3, 0);
+    inputGrid.add(dyear, 1, 1);
+    inputGrid.add(dmonth, 2, 1);
+    inputGrid.add(dday, 3, 1);
     inputGrid.add(Isearch, 4, 0);
     inputGrid.add(Iclear, 5, 0);
-    
+
+    Isearch.setOnAction(e -> {
+      csvTable.setItems(FXCollections
+          .observableArrayList(report.getRangeReport(null, year.getValue(), month.getValue(),
+              day.getValue(), null, dyear.getValue(), dmonth.getValue(), dday.getValue())));
+    });
+
     d_grid.add(farmChart, 0, 1);
     d_grid.add(monthChart, 1, 1);
     d_grid.add(yearChart, 0, 2);
@@ -108,6 +118,7 @@ public class Main extends Application {
     chartMaker(farmChart, "FARM", 0);
     chartMaker(monthChart, "MONTH", 1);
     chartMaker(yearChart, "YEAR", 2);
+
 
     Cfile.setOnAction(e -> {
 
@@ -135,21 +146,21 @@ public class Main extends Application {
     csvTable
         .setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(null, null)));
     setTableColumn("MONTH", "PERCENTAGE", "TOTAL WEIGHT");
-    
-    Isearch.setOnAction(e ->{
-      if(farmID.getText().equals(""))
-      csvTable
-      .setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(null, year.getValue())));
+
+    Isearch.setOnAction(e -> {
+      if (farmID.getText().equals(""))
+        csvTable.setItems(
+            FXCollections.observableArrayList(report.getFarmReport(null, year.getValue())));
       else
-        csvTable
-        .setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(farmID.getText(), year.getValue())));
+        csvTable.setItems(FXCollections
+            .observableArrayList(report.getFarmReport(farmID.getText(), year.getValue())));
     });
-    
+
     inputGrid.add(farmID, 1, 0);
     inputGrid.add(year, 2, 0);
     inputGrid.add(Isearch, 4, 0);
     inputGrid.add(Iclear, 5, 0);
-    
+
     d_grid.add(monthChart, 0, 1);
     d_grid.add(yearChart, 1, 1);
     monthChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
@@ -274,7 +285,7 @@ public class Main extends Application {
     inputGrid = new GridPane();
     inputGrid.setHgap(10);
     inputGrid.setVgap(10);
-    
+
     Isearch = new Button("Search");
     Isearch.prefWidthProperty().bind(inputGrid.widthProperty().divide(7));
     Iclear = new Button("Clear");
@@ -284,6 +295,9 @@ public class Main extends Application {
       farmID.clear();
       month.getItems().clear();
       day.getItems().clear();
+      dyear.setPromptText("YEAR");
+      dmonth.setPromptText("MONTH");
+      dday.setPromptText("DAY");
       year.setPromptText("YEAR");
       month.setPromptText("MONTH");
       day.setPromptText("DAY");
@@ -298,7 +312,7 @@ public class Main extends Application {
     month.setPromptText("MONTH");
     day = new ComboBox<String>();
     day.setPromptText("DAY");
-    for(int i = 2000; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
+    for (int i = 2000; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
       year.getItems().add(i + "");
     }
     year.setOnAction(e -> {
@@ -320,6 +334,37 @@ public class Main extends Application {
             || month.getValue().equals("08") || month.getValue().equals("10")
             || month.getValue().equals("12"))
           day.getItems().add("31");
+      }
+    });
+
+    dyear = new ComboBox<String>();
+    dyear.setPromptText("YEAR");
+    dmonth = new ComboBox<String>();
+    dmonth.setPromptText("MONTH");
+    dday = new ComboBox<String>();
+    dday.setPromptText("DAY");
+    for (int i = 2000; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
+      dyear.getItems().add(i + "");
+    }
+    dyear.setOnAction(e -> {
+      dmonth.getItems().clear();
+      dmonth.getItems().addAll("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
+          "12");
+    });
+    dmonth.setOnAction(e -> {
+      dday.getItems().clear();
+      for (int i = 1; i <= 28; i++) {
+        String input = i + "";
+        if (input.length() < 2)
+          input = "0" + input;
+        dday.getItems().add(input);
+      }
+      if (!dmonth.getItems().isEmpty() && !dmonth.getValue().equals("02")) {
+        dday.getItems().addAll("29", "30");
+        if (dmonth.getValue().equals("04") || dmonth.getValue().equals("06")
+            || dmonth.getValue().equals("08") || dmonth.getValue().equals("10")
+            || dmonth.getValue().equals("12"))
+          dday.getItems().add("31");
       }
     });
 
@@ -360,6 +405,7 @@ public class Main extends Application {
           .divide((columns.length + 1) * columns.length / 2).multiply(i + 1));
       csvTable.getColumns().add(fn[i]);
     }
+    csvTable.getSortOrder().add(fn[0]);
   }
 
   private void clearBoard() {
