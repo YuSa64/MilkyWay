@@ -59,8 +59,8 @@ public class FarmReport {
         map.replace(key, Integer.parseInt(map.get(key)) + Integer.parseInt(f.getF3()) + "");
     }
     for (Map.Entry<String, String> e : map.entrySet()) {
-      output.add(new Farm(e.getKey(),(Double.parseDouble(e.getValue()) / totalWeight * 100)
-          + "", e.getValue()));
+      output.add(new Farm(e.getKey(),Double.toString((Double.parseDouble(e.getValue()) / totalWeight * 100)).substring(0,5)
+          + "%", e.getValue()));
     }
     return sortF1(output);
   }
@@ -77,8 +77,8 @@ public class FarmReport {
         map.replace(key, Integer.parseInt(map.get(key)) + Integer.parseInt(f.getF3()) + "");
     }
     for (Map.Entry<String, String> e : map.entrySet()) {
-      output.add(new Farm(e.getKey(),(Double.parseDouble(e.getValue()) / totalWeight * 100)
-          + "", e.getValue()));
+      output.add(new Farm(e.getKey(),Double.toString((Double.parseDouble(e.getValue()) / totalWeight * 100)).substring(0,5)
+          + "%", e.getValue()));
     }
     return sortF1(output);
   }
@@ -97,8 +97,8 @@ public class FarmReport {
     }
     for (Map.Entry<String, String> e : map.entrySet()) {
       output.add(new Farm(e.getKey(),
-          (Double.parseDouble(e.getValue()) / monthlyWeight[Integer.parseInt(e.getKey()) - 1] * 100)
-              + "",
+          Double.toString((Double.parseDouble(e.getValue()) / monthlyWeight[Integer.parseInt(e.getKey()) - 1] * 100)).substring(0,5)
+              + "%",
           e.getValue()));
     }
     return sortF1(output);
