@@ -111,19 +111,25 @@ public class FarmReport {
 
   /**
    * Return list of targeted Farms. Null for argument is equal to all.
+   * 
    * @param farm_id target farm_id (null equals all)
    * @param year target year (null equals all)
    * @param month target month (null equals all)
    * @return List<Farm> with target Farm objects
    */
-  public List<Farm> getTargetSum(String farm_id, String year, String month) {
+  public List<Farm> getTargetSum(String sid, String syear, String smonth, String eid, String eyear,
+      String emonth) {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String[], Integer> map = new HashMap<String[], Integer>();
 
     for (Farm f : dataSet) {
       String key[] = {f.getF1(), f.getF2().substring(0, 4), f.getF2().substring(5, 7)};
-      if ((key[0].equals(farm_id) || farm_id == null) && (key[1].equals(year) || year == null)
-          && (key[2].equals(month) || month == null)) {
+      if ((((sid == null) || (key[0].compareTo(sid) >= 0))
+          && ((eid == null) || (key[0].compareTo(eid) <= 0)))
+          && ((((syear == null) || key[1].compareTo(syear) >= 0))
+              && (((eyear == null) || key[1].compareTo(eyear) <= 0)))
+          && (((smonth == null) || (key[2].compareTo(smonth) >= 0))
+              && ((emonth == null) || (key[2].compareTo(emonth) <= 0)))) {
         if (!map.containsKey(key))
           map.put(key, f.getF3());
         else

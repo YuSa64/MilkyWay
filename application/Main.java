@@ -54,25 +54,25 @@ public class Main extends Application {
     List<Farm> farmList;
     switch (type) {
       case 0:
-        if(strings.length != 0)
+        if (strings.length != 0)
           farmList = report.getFarmSum(strings[0]);
         else
-          farmList = report.getFarmSum(null);          
+          farmList = report.getFarmSum(null);
         break;
       case 1:
-        if(strings.length != 0)
+        if (strings.length != 0)
           farmList = report.getMonthSum(strings[0]);
         else
-          farmList = report.getMonthSum(null);   
+          farmList = report.getMonthSum(null);
         break;
       case 2:
-        if(strings.length != 0)
+        if (strings.length != 0)
           farmList = report.getYearSum(strings[0]);
         else
-          farmList = report.getYearSum(null);   
+          farmList = report.getYearSum(null);
         break;
       case 3:
-        farmList = report.getTargetSum(strings[0], strings[1], strings[2]);   
+        farmList = report.getTargetSum(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5]);
         break;
       default:
         farmList = report.getAllList();
@@ -163,6 +163,7 @@ public class Main extends Application {
   private void showMonthly(Stage primaryStage) {
     clearBoard();
     underliner(topB, 3);
+
 
   }
 
