@@ -17,9 +17,13 @@ import javafx.scene.control.Alert.AlertType;
 
 public class FarmReport {
   HashSet<Farm> dataSet;
+  int totalWeight;
+  int[] monthlyWeight;
 
   public FarmReport() {
     dataSet = new HashSet<Farm>();
+    totalWeight = 0;
+    monthlyWeight = new int[12];
   }
 
   public void add(Farm farm) {
@@ -35,76 +39,67 @@ public class FarmReport {
     return sortF1(sortF2(output));
   }
 
-  public int getSum() {
-    ArrayList<Farm> list = new ArrayList<Farm>(dataSet);
-    int output = 0;
-    for (Farm f : list)
-      output += f.getF3();
-    return output;
+  public int getTotalWeight() {
+    return totalWeight;
   }
 
-  /**
-   * Returns List of sum of each year-month.
-   * 
-   * @return List of Farm(year-month, , total weight)
-   */
-  public List<Farm> getMonthSum(String month) {
-    ArrayList<Farm> output = new ArrayList<Farm>();
-    HashMap<String, Integer> map = new HashMap<String, Integer>();
-    for (Farm f : dataSet) {
-      String key = f.getF2().substring(5, 7);
-      if (month == null || month.equals(key))
-        if (!map.containsKey(key))
-          map.put(key, f.getF3());
-        else
-          map.replace(key, map.get(key) + f.getF3());
-    }
-    for (Map.Entry<String, Integer> e : map.entrySet()) {
-      output.add(new Farm(e.getKey(), "", e.getValue()));
-    }
-    return sortF1(output);
+  public int getMonthlyWeight(int month) {
+    return monthlyWeight[month];
   }
 
-  /**
-   * Returns List of sum of each year.
-   * 
-   * @return List of Farm(year, , total weight)
-   */
-  public List<Farm> getYearSum(String year) {
+  public List<Farm> getMonthlyReport(String year, String month) {
+    List<Farm> list = getRangeReport(null, year, month, null, null, year, month, null);
     ArrayList<Farm> output = new ArrayList<Farm>();
-    HashMap<String, Integer> map = new HashMap<String, Integer>();
-    for (Farm f : dataSet) {
-      String key = f.getF2().substring(0, 4);
-      if (year == null || year.equals(key))
-        if (!map.containsKey(key))
-          map.put(key, f.getF3());
-        else
-          map.replace(key, map.get(key) + f.getF3());
-    }
-    for (Map.Entry<String, Integer> e : map.entrySet()) {
-      output.add(new Farm(e.getKey(), "", e.getValue()));
-    }
-    return sortF1(output);
-  }
-
-  /**
-   * Returns List of sum of each farm.
-   * 
-   * @return List of Farm(farm_id, , total weight)
-   */
-  public List<Farm> getFarmSum(String farm_id) {
-    ArrayList<Farm> output = new ArrayList<Farm>();
-    HashMap<String, Integer> map = new HashMap<String, Integer>();
-    for (Farm f : dataSet) {
+    HashMap<String, String> map = new HashMap<String, String>();
+    for (Farm f : list) {
       String key = f.getF1();
-      if (farm_id == null || farm_id.equals(key))
-        if (!map.containsKey(key))
-          map.put(key, f.getF3());
-        else
-          map.replace(key, map.get(key) + f.getF3());
+      if (!map.containsKey(key))
+        map.put(key, f.getF3());
+      else
+        map.replace(key, Integer.parseInt(map.get(key)) + Integer.parseInt(f.getF3()) + "");
     }
-    for (Map.Entry<String, Integer> e : map.entrySet()) {
-      output.add(new Farm(e.getKey(), "", e.getValue()));
+    for (Map.Entry<String, String> e : map.entrySet()) {
+      output.add(new Farm(e.getKey(),(Double.parseDouble(e.getValue()) / totalWeight * 100)
+          + "", e.getValue()));
+    }
+    return sortF1(output);
+  }
+
+  public List<Farm> getAnnualReport(String year) {
+    List<Farm> list = getRangeReport(null, year, null, null, null, year, null, null);
+    ArrayList<Farm> output = new ArrayList<Farm>();
+    HashMap<String, String> map = new HashMap<String, String>();
+    for (Farm f : list) {
+      String key = f.getF1();
+      if (!map.containsKey(key))
+        map.put(key, f.getF3());
+      else
+        map.replace(key, Integer.parseInt(map.get(key)) + Integer.parseInt(f.getF3()) + "");
+    }
+    for (Map.Entry<String, String> e : map.entrySet()) {
+      output.add(new Farm(e.getKey(),(Double.parseDouble(e.getValue()) / totalWeight * 100)
+          + "", e.getValue()));
+    }
+    return sortF1(output);
+  }
+
+
+  public List<Farm> getFarmReport(String farm_id, String year) {
+    List<Farm> list = getRangeReport(farm_id, year, null, null, farm_id, year, null, null);
+    HashMap<String, String> map = new HashMap<String, String>();
+    ArrayList<Farm> output = new ArrayList<Farm>();
+    for (Farm f : list) {
+      String key = f.getF2().substring(5, 7);
+      if (!map.containsKey(key))
+        map.put(key, f.getF3());
+      else
+        map.replace(key, Integer.parseInt(map.get(key)) + Integer.parseInt(f.getF3()) + "");
+    }
+    for (Map.Entry<String, String> e : map.entrySet()) {
+      output.add(new Farm(e.getKey(),
+          (Double.parseDouble(e.getValue()) / monthlyWeight[Integer.parseInt(e.getKey()) - 1] * 100)
+              + "",
+          e.getValue()));
     }
     return sortF1(output);
   }
@@ -122,13 +117,14 @@ public class FarmReport {
    * @param eday ending day
    * @return list of targeted farms (farm_id, date, total weight)
    */
-  public List<Farm> getTargetSum(String sid, String syear, String smonth, String sday, String eid,
+  public List<Farm> getRangeReport(String sid, String syear, String smonth, String sday, String eid,
       String eyear, String emonth, String eday) {
     ArrayList<Farm> output = new ArrayList<Farm>();
-    HashMap<String[], Integer> map = new HashMap<String[], Integer>();
+    HashMap<String[], String> map = new HashMap<String[], String>();
 
     for (Farm f : dataSet) {
-      String key[] = {f.getF1(), f.getF2().substring(0, 4), f.getF2().substring(5, 7), f.getF2().substring(8, 10)};
+      String key[] = {f.getF1(), f.getF2().substring(0, 4), f.getF2().substring(5, 7),
+          f.getF2().substring(8, 10)};
       if ((((sid == null) || (key[0].compareTo(sid) >= 0))
           && ((eid == null) || (key[0].compareTo(eid) <= 0)))
           && ((((syear == null) || key[1].compareTo(syear) >= 0))
@@ -140,11 +136,12 @@ public class FarmReport {
         if (!map.containsKey(key))
           map.put(key, f.getF3());
         else
-          map.replace(key, map.get(key) + f.getF3());
+          map.replace(key, Integer.parseInt(map.get(key)) + Integer.parseInt(f.getF3()) + "");
       }
     }
-    for (Map.Entry<String[], Integer> e : map.entrySet()) {
-      output.add(new Farm(e.getKey()[0], e.getKey()[1] + "-" + e.getKey()[2] + "-" + e.getKey()[3], e.getValue()));
+    for (Map.Entry<String[], String> e : map.entrySet()) {
+      output.add(new Farm(e.getKey()[0], e.getKey()[1] + "-" + e.getKey()[2] + "-" + e.getKey()[3],
+          Integer.parseInt(e.getValue()) + ""));
     }
     return sortF1(sortF2(output));
   }
@@ -210,7 +207,9 @@ public class FarmReport {
           String inDate = tempDate[0] + "-" + tempDate[1] + "-" + tempDate[2];
 
           weight = Integer.parseInt(pweight);
-          add(new Farm(farm_id, inDate, weight));
+          totalWeight += weight;
+          monthlyWeight[Integer.parseInt(tempDate[1]) - 1] += weight;
+          add(new Farm(farm_id, inDate, weight + ""));
         }
 
       }

@@ -55,31 +55,31 @@ public class Main extends Application {
     switch (type) {
       case 0:
         if (strings.length != 0)
-          farmList = report.getFarmSum(strings[0]);
+          farmList = report.getFarmReport(strings[0], strings[1]);
         else
-          farmList = report.getFarmSum(null);
+          farmList = report.getFarmReport(null, null);
         break;
       case 1:
         if (strings.length != 0)
-          farmList = report.getMonthSum(strings[0]);
+          farmList = report.getMonthlyReport(strings[0], strings[1]);
         else
-          farmList = report.getMonthSum(null);
+          farmList = report.getMonthlyReport(null, null);
         break;
       case 2:
         if (strings.length != 0)
-          farmList = report.getYearSum(strings[0]);
+          farmList = report.getAnnualReport(strings[0]);
         else
-          farmList = report.getYearSum(null);
+          farmList = report.getAnnualReport(null);
         break;
       case 3:
-        farmList = report.getTargetSum(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7]);
+        farmList = report.getRangeReport(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7]);
         break;
       default:
         farmList = report.getAllList();
         break;
     }
     for (Farm f : farmList) {
-      PieChart.Data d = new PieChart.Data(f.getF1(), f.getF3());
+      PieChart.Data d = new PieChart.Data(f.getF1(), Integer.parseInt(f.getF3()));
       if (!pieChartData.contains(d)) {
         pieChartData.add(d);
       }
@@ -118,7 +118,7 @@ public class Main extends Application {
           // setTableColumn("NOpe", "yep", "nope");
           // }
         }
-      total.setText(report.getSum() + "");
+      total.setText(report.getTotalWeight() + "");
       showData(primaryStage);
     });
 
@@ -128,13 +128,13 @@ public class Main extends Application {
     clearBoard();
     underliner(topB, 1);
 
-    csvTable.setItems(dataList = FXCollections.observableArrayList(report.getMonthSum(null)));
-    setTableColumn("MONTH", "TOTAL WEIGHT");
+    csvTable.setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(null, null)));
+    setTableColumn("MONTH", "PERCENTAGE", "TOTAL WEIGHT");
     d_grid.add(monthChart, 0, 1);
     d_grid.add(yearChart, 1, 1);
     monthChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
     yearChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
-    chartMaker(monthChart, "MONTH", 1);
+    chartMaker(monthChart, "FARM", 1);
     chartMaker(yearChart, "YEAR", 2);
 
     Cfile.setOnAction(e -> {
@@ -149,7 +149,7 @@ public class Main extends Application {
           // setTableColumn("NOpe", "yep", "nope");
           // }
         }
-      total.setText(report.getSum() + "");
+      total.setText(report.getTotalWeight() + "");
       showFarm(primaryStage);
     });
 
@@ -313,7 +313,7 @@ public class Main extends Application {
     root.setCenter(rightPanel);
     root.setPadding(new Insets(10));
     Label totalWt = new Label("Total Weight:");
-    total.setText(report.getSum() + "");
+    total.setText(report.getTotalWeight() + "");
     totalWt.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
     totalWt.setFont(new Font(new Label().getFont().getName(), 16));
     total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
@@ -335,18 +335,13 @@ public class Main extends Application {
 
     TableColumn[] fn = new TableColumn[columns.length];
     int i;
-    for (i = 0; i < columns.length - 1; i++) {
+    for (i = 0; i < columns.length; i++) {
       fn[i] = new TableColumn<>(columns[i]);
       fn[i].setCellValueFactory(new PropertyValueFactory<>("f" + (i + 1)));
       fn[i].prefWidthProperty().bind(csvTable.widthProperty()
           .divide((columns.length + 1) * columns.length / 2).multiply(i + 1));
       csvTable.getColumns().add(fn[i]);
     }
-    fn[i] = new TableColumn<>(columns[i]);
-    fn[i].setCellValueFactory(new PropertyValueFactory<>("f3"));
-    fn[i].prefWidthProperty().bind(
-        csvTable.widthProperty().divide((columns.length + 1) * columns.length / 2).multiply(i + 1));
-    csvTable.getColumns().add(fn[i]);
   }
 
   private void clearBoard() {
