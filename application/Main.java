@@ -13,6 +13,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -40,14 +41,12 @@ public class Main extends Application {
   private Button[] topB;
   private FileChooser fileChooser;
   private Label total;
-  private Button Cfile;
-  private GridPane d_grid;
+  private Button Cfile, Isearch, Iclear;
+  private GridPane d_grid, inputGrid;
   private PieChart farmChart, monthChart, yearChart;
   private ObservableList<Farm> dataList;
-
   private TextField farmID;
-  private TextField year;
-  private TextField month;
+  private ComboBox<String> year, month, day;
 
   private void chartMaker(PieChart chart, String name, int type, String... strings) {
 
@@ -73,7 +72,8 @@ public class Main extends Application {
           farmList = report.getAnnualReport(null);
         break;
       case 3:
-        farmList = report.getRangeReport(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7]);
+        farmList = report.getRangeReport(strings[0], strings[1], strings[2], strings[3], strings[4],
+            strings[5], strings[6], strings[7]);
         break;
       default:
         farmList = report.getAllList();
@@ -96,6 +96,13 @@ public class Main extends Application {
 
     csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
     setTableColumn("FARM", "DATE", "WEIGHT");
+    
+    inputGrid.add(year, 1, 0);
+    inputGrid.add(month, 2, 0);
+    inputGrid.add(day, 3, 0);
+    inputGrid.add(Isearch, 4, 0);
+    inputGrid.add(Iclear, 5, 0);
+    
     d_grid.add(farmChart, 0, 1);
     d_grid.add(monthChart, 1, 1);
     d_grid.add(yearChart, 0, 2);
@@ -129,8 +136,24 @@ public class Main extends Application {
     clearBoard();
     underliner(topB, 1);
 
-    csvTable.setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(null, null)));
+    csvTable
+        .setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(null, null)));
     setTableColumn("MONTH", "PERCENTAGE", "TOTAL WEIGHT");
+    
+    Isearch.setOnAction(e ->{
+      if(farmID.getText().equals(""))
+      csvTable
+      .setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(null, year.getValue())));
+      else
+        csvTable
+        .setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(farmID.getText(), year.getValue())));
+    });
+    
+    inputGrid.add(farmID, 1, 0);
+    inputGrid.add(year, 2, 0);
+    inputGrid.add(Isearch, 4, 0);
+    inputGrid.add(Iclear, 5, 0);
+    
     d_grid.add(monthChart, 0, 1);
     d_grid.add(yearChart, 1, 1);
     monthChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
@@ -251,65 +274,59 @@ public class Main extends Application {
     Cfile = new Button("Select File(s)...");
     Cfile.setFocusTraversable(false);
 
-    GridPane userGrid = new GridPane();
+    // user input
+    inputGrid = new GridPane();
+    inputGrid.setHgap(10);
+    inputGrid.setVgap(10);
+    
+    Isearch = new Button("Search");
+    Isearch.prefWidthProperty().bind(inputGrid.widthProperty().divide(7));
+    Iclear = new Button("Clear");
+    Iclear.prefWidthProperty().bind(inputGrid.widthProperty().divide(7));
 
-    farmID = new TextField("Enter a farm ID");
-    year = new TextField("Enter a year");
-    month = new TextField("Enter a month 1-12");
-    Button submit = new Button("Submit");
-    Button clear = new Button("Clear");
+    Iclear.setOnAction(e -> {
+      farmID.clear();
+      month.getItems().clear();
+      day.getItems().clear();
+      year.setPromptText("YEAR");
+      month.setPromptText("MONTH");
+      day.setPromptText("DAY");
+      farmID.setPromptText("Enter a farm ID");
+    });
 
-    Label farmIDWarning = new Label("");
-    farmIDWarning.setTextFill(Color.web("Red"));
-    Label yearWarning = new Label("");
-    yearWarning.setTextFill(Color.web("Red"));
-
-    userGrid.add(new Label("Farm"), 0, 0);
-    userGrid.add(new Label("Year"), 0, 1);
-    userGrid.add(new Label("Month"), 0, 2);
-    userGrid.add(farmID, 1, 0);
-    userGrid.add(year, 1, 1);
-    userGrid.add(month, 1, 2);
-    userGrid.add(clear, 0, 3);
-    userGrid.add(submit, 1, 3);
-    userGrid.add(farmIDWarning, 2, 0);
-    userGrid.add(yearWarning, 2, 1);
-
-    // String farmIDInput;
-    // String yearInput;
-    // String monthInput;
-    submit.setOnAction(new EventHandler<ActionEvent>() {
-
-      @Override
-      public void handle(ActionEvent e) {
-        if ((farmID.getText() != null && !farmID.getText().isEmpty())) {
-          farmIDWarning.setText("");
-        } else {
-          farmIDWarning.setText("* You must enter a farm ID.");
-        }
-        if ((year.getText() != null && !year.getText().isEmpty())) {
-          yearWarning.setText("");
-        } else {
-          yearWarning.setText("* You must enter a year");
-        }
+    farmID = new TextField();
+    farmID.setPromptText("Enter a farm ID");
+    year = new ComboBox<String>();
+    year.setPromptText("YEAR");
+    month = new ComboBox<String>();
+    month.setPromptText("MONTH");
+    day = new ComboBox<String>();
+    day.setPromptText("DAY");
+    year.getItems().add("2019");
+    year.setOnAction(e -> {
+      month.getItems().clear();
+      month.getItems().addAll("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
+          "12");
+    });
+    month.setOnAction(e -> {
+      day.getItems().clear();
+      for (int i = 1; i <= 28; i++) {
+        String input = i + "";
+        if (input.length() < 2)
+          input = "0" + input;
+        day.getItems().add(input);
+      }
+      if (!month.getItems().isEmpty() && !month.getValue().equals("02")) {
+        day.getItems().addAll("29", "30");
+        if (month.getValue().equals("04") || month.getValue().equals("06")
+            || month.getValue().equals("08") || month.getValue().equals("10")
+            || month.getValue().equals("12"))
+          day.getItems().add("31");
       }
     });
 
-    // System.out.println(yearInput);
-
-    // Setting an action for the Clear button
-    clear.setOnAction(new EventHandler<ActionEvent>() {
-
-      @Override
-      public void handle(ActionEvent e) {
-        farmID.clear();
-        year.clear();
-        month.clear();
-
-      }
-    });
-
-    rightTop.getChildren().addAll(Cfile, userGrid);
+    rightTop.getChildren().addAll(Cfile, inputGrid);
+    rightTop.setSpacing(10);
 
     rightPanel.setPadding(new Insets(10));
     rightPanel.setSpacing(10);
@@ -350,6 +367,7 @@ public class Main extends Application {
   private void clearBoard() {
     csvTable.getColumns().clear();
     d_grid.getChildren().clear();
+    inputGrid.getChildren().clear();
   }
 
   public static void main(String[] args) {
