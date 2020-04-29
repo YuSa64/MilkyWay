@@ -1,3 +1,5 @@
+// TODO: Right Panel GUI (Chart, Textfield, etc)
+
 package application;
 
 import java.io.File;
@@ -52,7 +54,10 @@ public class Main extends Application {
 	private TextField farmID;
 	private TextField year;
 	private TextField month;
-
+	private TextField Day;
+	private TextField year1;
+	private TextField month1;
+	private TextField Day1;
 
 	private void chartMaker(PieChart chart, String name, int type, String... strings) {
 
@@ -101,9 +106,9 @@ public class Main extends Application {
 
 		csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
 		setTableColumn("FARM", "DATE", "WEIGHT");
-		d_grid.add(farmChart, 0, 1);
-		d_grid.add(monthChart, 1, 1);
-		d_grid.add(yearChart, 0, 2);
+		d_grid.add(farmChart, 0, 4);
+		d_grid.add(monthChart, 1, 4);
+		d_grid.add(yearChart, 0, 5);
 		farmChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
 		monthChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
 		yearChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
@@ -122,6 +127,54 @@ public class Main extends Application {
 			csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
 			total.setText(report.getSum() + "");
 			showData(primaryStage);
+		});
+
+		farmID = new TextField("Enter a farm ID");
+		year = new TextField("Enter a year");
+		month = new TextField("Enter a month 1-12");
+		Button submit = new Button("Submit");
+		Button clear = new Button("Clear");
+
+		Label farmIDWarning = new Label("ID");
+		Label yearWarning = new Label("year");
+
+		d_grid.add(new Label("Farm"), 0, 0);
+		d_grid.add(new Label("Year"), 0, 1);
+		d_grid.add(new Label("Month"), 0, 2);
+		d_grid.add(farmID, 1, 0);
+		d_grid.add(year, 1, 1);
+		d_grid.add(month, 1, 2);
+		d_grid.add(clear, 0, 3);
+		d_grid.add(submit, 1, 3);
+		d_grid.add(farmIDWarning, 2, 0);
+		d_grid.add(yearWarning, 2, 1);
+		
+		submit.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent e) {
+				if ((farmID.getText() != null && !farmID.getText().isEmpty())) {
+					String farmIDInput = farmID.getText();
+				} else {
+					farmIDWarning.setText("You must enter a farm ID.");
+				}
+				if ((year.getText() != null && !year.getText().isEmpty())) {
+					String yearInput = year.getText();
+				} else {
+					farmIDWarning.setText("You must enter a year");
+				}
+			}
+		});
+
+		clear.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent e) {
+				farmID.clear();
+				year.clear();
+				month.clear();
+
+			}
 		});
 
 	}
@@ -155,6 +208,36 @@ public class Main extends Application {
 	private void showAnnual(Stage primaryStage) {
 		clearBoard();
 		underliner(topB, 2);
+		
+		year = new TextField("Enter a Year");
+		d_grid.add(new Label("Date"), 0, 0);
+		d_grid.add(year, 1, 0);
+		Button submit = new Button("Submit");
+		Button clear = new Button("Clear");
+		Label dateWarning = new Label("Type Year");
+		d_grid.add(submit, 0, 1);
+		d_grid.add(clear, 1, 1);
+		d_grid.add(dateWarning, 2, 0);
+		
+		submit.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent e) {
+				if (year.getText() != null ) {
+					String yearInput = year.getText();
+				} else {
+					dateWarning.setText("You must enter a year.");
+				}
+			}
+		});
+
+		clear.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent e) {
+				year.clear();
+			}
+		});
 		d_grid.add(farmChart, 0, 2);
 		csvTable.setItems(dataList = FXCollections.observableArrayList(report.getFarmSum(null)));
 		setTableColumn("FARM", "TOTAL WEIGHT");
@@ -179,6 +262,36 @@ public class Main extends Application {
 		clearBoard();
 		underliner(topB, 3);
 		
+		month = new TextField("Month");
+		year = new TextField("Year");
+		d_grid.add(new Label("Date"), 0, 0);
+		d_grid.add(month, 1, 0);
+		d_grid.add(year, 2, 0);
+		Button submit = new Button("Submit");
+		Button clear = new Button("Clear");
+		d_grid.add(submit, 0, 1);
+		d_grid.add(clear, 1, 1);
+		
+		submit.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent e) {
+				if ((year.getText() != null && !month.getText().isEmpty())) {
+					String yearInput = year.getText();
+					String monthInput = month.getText();
+				} 
+			}
+		});
+
+		clear.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent e) {
+				year.clear();
+				month.clear();
+			}
+		});
+		
 		d_grid.add(farmChart, 0, 2);
 		csvTable.setItems(dataList = FXCollections.observableArrayList(report.getFarmSum(null)));
 		setTableColumn("FARM", "TOTAL WEIGHT");
@@ -199,6 +312,64 @@ public class Main extends Application {
 	private void showRange(Stage primaryStage) {
 		clearBoard();
 		underliner(topB, 4);
+		
+		year = new TextField("Year");
+		month = new TextField("Month");
+		Day = new TextField("Day");
+		year1 = new TextField("Year");
+		month1 = new TextField("Month");
+		Day1 = new TextField("Day");
+		d_grid.add(new Label("From"), 0, 0);
+		d_grid.add(year, 1, 0);
+		d_grid.add(month, 2, 0);
+		d_grid.add(Day, 3, 0);
+		d_grid.add(new Label("To"), 0, 1);
+		d_grid.add(year1, 1, 1);
+		d_grid.add(month1, 2, 1);
+		d_grid.add(Day1, 3, 1);
+		
+		Button submit = new Button("Submit");
+		Button clear = new Button("Clear");
+		d_grid.add(submit, 0, 2);
+		d_grid.add(clear, 1, 2);
+		
+		submit.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent e) {
+				if ((month.getText() != null && !year.getText().isEmpty() && !Day.getText().isEmpty())) {
+					String DayInput = Day.getText();
+					String monthInput = month.getText();
+					String yearInput = year.getText();
+				}
+			}
+		});
+
+		clear.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent e) {
+				Day.clear();
+				month.clear();
+				year.clear();
+			}
+		});
+		
+		d_grid.add(farmChart, 0, 3);
+		csvTable.setItems(dataList = FXCollections.observableArrayList(report.getFarmSum(null)));
+		setTableColumn("FARM", "TOTAL WEIGHT");
+		farmChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
+		chartMaker(farmChart, "FARM", 0);
+		
+		Cfile.setOnAction(e -> {
+			List<File> selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
+			if (selectedFiles != null)
+				for (File f : selectedFiles) {
+						report.readCSV(f);
+				}
+			total.setText(report.getSum() + "");
+			showFarm(primaryStage);
+		});
 
 	}
 
@@ -279,58 +450,14 @@ public class Main extends Application {
 		Cfile.setFocusTraversable(false);
 
 		GridPane userGrid = new GridPane();
-
-		farmID = new TextField("Enter a farm ID");
-		year = new TextField("Enter a year");
-		month = new TextField("Enter a month 1-12");
-		Button submit = new Button("Submit");
-		Button clear = new Button("Clear");
-
-		Label farmIDWarning = new Label("ID");
-		Label yearWarning = new Label("year");
+		
 		Label s_label = new Label("Statistic");
-
-		userGrid.add(new Label("Farm"), 0, 0);
-		userGrid.add(new Label("Year"), 0, 1);
-		userGrid.add(new Label("Month"), 0, 2);
-		userGrid.add(farmID, 1, 0);
-		userGrid.add(year, 1, 1);
-		userGrid.add(month, 1, 2);
-		userGrid.add(clear, 0, 3);
-		userGrid.add(submit, 1, 3);
-		userGrid.add(farmIDWarning, 2, 0);
-		userGrid.add(yearWarning, 2, 1);
 		userGrid.add(s_label, 0, 4);
 		
 		
-		
-		submit.setOnAction(new EventHandler<ActionEvent>() {
+		s_label.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
+		s_label.setFont(new Font(new Label().getFont().getName(), 20));
 
-			@Override
-			public void handle(ActionEvent e) {
-				if ((farmID.getText() != null && !farmID.getText().isEmpty())) {
-					String farmIDInput = farmID.getText();
-				} else {
-					farmIDWarning.setText("You must enter a farm ID.");
-				}
-				if ((year.getText() != null && !year.getText().isEmpty())) {
-					String yearInput = year.getText();
-				} else {
-					farmIDWarning.setText("You must enter a year");
-				}
-			}
-		});
-
-		clear.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent e) {
-				farmID.clear();
-				year.clear();
-				month.clear();
-
-			}
-		});
 
 		rightTop.getChildren().addAll(Cfile, userGrid);
 
@@ -350,9 +477,7 @@ public class Main extends Application {
 		d_grid.setVgap(10);
 
 		
-		s_label.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
-		s_label.setFont(new Font(new Label().getFont().getName(), 20));
-		//d_grid.add(s_label, 0, 0);
+		
 
 		rightPanel.getChildren().addAll(rightTop, d_grid, rightBottom);
 	}
