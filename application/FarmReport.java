@@ -107,6 +107,26 @@ public class FarmReport {
     return output;
   }
 
+  public List<Farm> getAnnual() {
+    List<Farm> list = getRangeReport(null, null, null, null, null, null, null, null);
+    HashMap<String, String> map = new HashMap<String, String>();
+    ArrayList<Farm> output = new ArrayList<Farm>();
+    for (Farm f : list) {
+      String key = f.getF2().substring(0, 4);
+      if (!map.containsKey(key))
+        map.put(key, f.getF3());
+      else
+        map.replace(key, Integer.parseInt(map.get(key)) + Integer.parseInt(f.getF3()) + "");
+    }
+    for (Map.Entry<String, String> e : map.entrySet()) {
+      output.add(new Farm(e.getKey(),
+          Double.toString((Double.parseDouble(e.getValue()) / totalWeight * 100)).substring(0, 5)
+              + "%",
+          e.getValue()));
+    }
+    return output;
+  }
+
   /**
    * Return list of targeted Farms. Null for argument is equal to all. All arguments are inclusive.
    * 

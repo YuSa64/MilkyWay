@@ -44,32 +44,20 @@ public class Main extends Application {
   private TextField farmID;
   private ComboBox<String> year, month, day, dyear, dmonth, dday;
 
-  private void chartMaker(PieChart chart, String name, int type, String... strings) {
+  private void chartMaker(PieChart chart, String name, int type) {
 
     ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
     List<Farm> farmList;
     switch (type) {
       case 0:
-        if (strings.length != 0)
-          farmList = report.getFarmReport(strings[0], strings[1]);
-        else
-          farmList = report.getFarmReport(null, null);
+        farmList = report.getFarmReport(null, null);
         break;
       case 1:
-        if (strings.length != 0)
-          farmList = report.getMonthlyReport(strings[0], strings[1]);
-        else
-          farmList = report.getMonthlyReport(null, null);
+
+        farmList = report.getMonthlyReport(null, null);
         break;
       case 2:
-        if (strings.length != 0)
-          farmList = report.getAnnualReport(strings[0]);
-        else
-          farmList = report.getAnnualReport(null);
-        break;
-      case 3:
-        farmList = report.getRangeReport(strings[0], strings[1], strings[2], strings[3], strings[4],
-            strings[5], strings[6], strings[7]);
+        farmList = report.getAnnual();
         break;
       default:
         farmList = report.getAllList();
@@ -94,6 +82,7 @@ public class Main extends Application {
     setTableColumn("FARM", "DATE", "WEIGHT");
     csvTable.getSortOrder().add(csvTable.getColumns().get(1));
 
+
     inputGrid.add(year, 1, 0);
     inputGrid.add(month, 2, 0);
     inputGrid.add(day, 3, 0);
@@ -103,15 +92,6 @@ public class Main extends Application {
     inputGrid.add(Isearch, 4, 0);
     inputGrid.add(Iclear, 5, 0);
 
-    d_grid.add(farmChart, 0, 1);
-    d_grid.add(monthChart, 1, 1);
-    d_grid.add(yearChart, 0, 2);
-    farmChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
-    monthChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
-    yearChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
-    chartMaker(farmChart, "FARM", 0);
-    chartMaker(monthChart, "MONTH", 1);
-    chartMaker(yearChart, "YEAR", 2);
 
     Isearch.setOnAction(e -> {
       csvTable.setItems(FXCollections
@@ -147,12 +127,6 @@ public class Main extends Application {
         .setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(null, null)));
     setTableColumn("MONTH", "PERCENTAGE", "TOTAL WEIGHT");
 
-    d_grid.add(monthChart, 0, 1);
-    d_grid.add(yearChart, 1, 1);
-    monthChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
-    yearChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
-    chartMaker(monthChart, "FARM", 1);
-    chartMaker(yearChart, "YEAR", 2);
 
     inputGrid.add(farmID, 1, 0);
     inputGrid.add(year, 2, 0);
@@ -174,13 +148,7 @@ public class Main extends Application {
       List<File> selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
       if (selectedFiles != null)
         for (File f : selectedFiles) {
-          // try {
           report.readCSV(f);
-          // } catch (NumberFormatException nfe) {
-          // setTableColumn("NOpe", "yep", "nope");
-          // } catch (StringIndexOutOfBoundsException nfe) {
-          // setTableColumn("NOpe", "yep", "nope");
-          // }
         }
       total.setText(report.getTotalWeight() + "");
       showFarm(primaryStage);
@@ -376,8 +344,15 @@ public class Main extends Application {
     total.setFont(new Font(new Label().getFont().getName(), 16));
     rightBottom.getChildren().addAll(totalWt, total);
 
+
     d_grid.setHgap(10);
     d_grid.setVgap(10);
+    d_grid.add(farmChart, 0, 1);
+    d_grid.add(monthChart, 1, 1);
+    d_grid.add(yearChart, 0, 2);
+    farmChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
+    monthChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
+    yearChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
 
     Label s_label = new Label("Statistic");
     s_label.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
@@ -403,8 +378,11 @@ public class Main extends Application {
 
   private void clearBoard() {
     csvTable.getColumns().clear();
-    d_grid.getChildren().clear();
     inputGrid.getChildren().clear();
+
+    chartMaker(monthChart, "MONTHLY", 0);
+    chartMaker(farmChart, "FARM", 1);
+    chartMaker(yearChart, "ANNUAL", 2);
   }
 
   public static void main(String[] args) {
