@@ -110,26 +110,33 @@ public class FarmReport {
   }
 
   /**
-   * Return list of targeted Farms. Null for argument is equal to all.
+   * Return list of targeted Farms. Null for argument is equal to all. All arguments are inclusive.
    * 
-   * @param farm_id target farm_id (null equals all)
-   * @param year target year (null equals all)
-   * @param month target month (null equals all)
-   * @return List<Farm> with target Farm objects
+   * @param sid starting farm id
+   * @param syear starting year
+   * @param smonth starting month
+   * @param sday starting day
+   * @param eid ending farm id
+   * @param eyear ending year
+   * @param emonth ending month
+   * @param eday ending day
+   * @return list of targeted farms (farm_id, date, total weight)
    */
-  public List<Farm> getTargetSum(String sid, String syear, String smonth, String eid, String eyear,
-      String emonth) {
+  public List<Farm> getTargetSum(String sid, String syear, String smonth, String sday, String eid,
+      String eyear, String emonth, String eday) {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String[], Integer> map = new HashMap<String[], Integer>();
 
     for (Farm f : dataSet) {
-      String key[] = {f.getF1(), f.getF2().substring(0, 4), f.getF2().substring(5, 7)};
+      String key[] = {f.getF1(), f.getF2().substring(0, 4), f.getF2().substring(5, 7), f.getF2().substring(8, 10)};
       if ((((sid == null) || (key[0].compareTo(sid) >= 0))
           && ((eid == null) || (key[0].compareTo(eid) <= 0)))
           && ((((syear == null) || key[1].compareTo(syear) >= 0))
               && (((eyear == null) || key[1].compareTo(eyear) <= 0)))
           && (((smonth == null) || (key[2].compareTo(smonth) >= 0))
-              && ((emonth == null) || (key[2].compareTo(emonth) <= 0)))) {
+              && ((emonth == null) || (key[2].compareTo(emonth) <= 0)))
+          && (((sday == null) || (key[3].compareTo(sday) >= 0))
+              && ((eday == null) || (key[3].compareTo(eday) <= 0)))) {
         if (!map.containsKey(key))
           map.put(key, f.getF3());
         else
@@ -137,7 +144,7 @@ public class FarmReport {
       }
     }
     for (Map.Entry<String[], Integer> e : map.entrySet()) {
-      output.add(new Farm(e.getKey()[0], e.getKey()[1] + "-" + e.getKey()[2], e.getValue()));
+      output.add(new Farm(e.getKey()[0], e.getKey()[1] + "-" + e.getKey()[2] + "-" + e.getKey()[3], e.getValue()));
     }
     return sortF1(sortF2(output));
   }

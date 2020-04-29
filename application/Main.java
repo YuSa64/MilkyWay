@@ -72,7 +72,7 @@ public class Main extends Application {
           farmList = report.getYearSum(null);
         break;
       case 3:
-        farmList = report.getTargetSum(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5]);
+        farmList = report.getTargetSum(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7]);
         break;
       default:
         farmList = report.getAllList();
