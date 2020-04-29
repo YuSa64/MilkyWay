@@ -22,6 +22,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -258,8 +259,10 @@ public class Main extends Application {
     Button submit = new Button("Submit");
     Button clear = new Button("Clear");
 
-    Label farmIDWarning = new Label("ID");
-    Label yearWarning = new Label("year");
+    Label farmIDWarning = new Label("");
+    farmIDWarning.setTextFill(Color.web("Red"));
+    Label yearWarning = new Label("");
+    yearWarning.setTextFill(Color.web("Red"));
 
     userGrid.add(new Label("Farm"), 0, 0);
     userGrid.add(new Label("Year"), 0, 1);
@@ -280,14 +283,14 @@ public class Main extends Application {
       @Override
       public void handle(ActionEvent e) {
         if ((farmID.getText() != null && !farmID.getText().isEmpty())) {
-          String farmIDInput = farmID.getText();
+          farmIDWarning.setText("");
         } else {
-          farmIDWarning.setText("You must enter a farm ID.");
+          farmIDWarning.setText("* You must enter a farm ID.");
         }
         if ((year.getText() != null && !year.getText().isEmpty())) {
-          String yearInput = year.getText();
+          yearWarning.setText("");
         } else {
-          farmIDWarning.setText("You must enter a year");
+          yearWarning.setText("* You must enter a year");
         }
       }
     });
