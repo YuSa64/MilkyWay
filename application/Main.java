@@ -103,12 +103,6 @@ public class Main extends Application {
     inputGrid.add(Isearch, 4, 0);
     inputGrid.add(Iclear, 5, 0);
 
-    Isearch.setOnAction(e -> {
-      csvTable.setItems(FXCollections
-          .observableArrayList(report.getRangeReport(null, year.getValue(), month.getValue(),
-              day.getValue(), null, dyear.getValue(), dmonth.getValue(), dday.getValue())));
-    });
-
     d_grid.add(farmChart, 0, 1);
     d_grid.add(monthChart, 1, 1);
     d_grid.add(yearChart, 0, 2);
@@ -119,6 +113,12 @@ public class Main extends Application {
     chartMaker(monthChart, "MONTH", 1);
     chartMaker(yearChart, "YEAR", 2);
 
+    Isearch.setOnAction(e -> {
+      csvTable.setItems(FXCollections
+          .observableArrayList(report.getRangeReport(null, year.getValue(), month.getValue(),
+              day.getValue(), null, dyear.getValue(), dmonth.getValue(), dday.getValue())));
+      csvTable.getSortOrder().add(csvTable.getColumns().get(0));
+    });
 
     Cfile.setOnAction(e -> {
 
@@ -147,26 +147,28 @@ public class Main extends Application {
         .setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(null, null)));
     setTableColumn("MONTH", "PERCENTAGE", "TOTAL WEIGHT");
 
-    Isearch.setOnAction(e -> {
-      if (farmID.getText().equals(""))
-        csvTable.setItems(
-            FXCollections.observableArrayList(report.getFarmReport(null, year.getValue())));
-      else
-        csvTable.setItems(FXCollections
-            .observableArrayList(report.getFarmReport(farmID.getText(), year.getValue())));
-    });
-
-    inputGrid.add(farmID, 1, 0);
-    inputGrid.add(year, 2, 0);
-    inputGrid.add(Isearch, 4, 0);
-    inputGrid.add(Iclear, 5, 0);
-
     d_grid.add(monthChart, 0, 1);
     d_grid.add(yearChart, 1, 1);
     monthChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
     yearChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
     chartMaker(monthChart, "FARM", 1);
     chartMaker(yearChart, "YEAR", 2);
+
+    inputGrid.add(farmID, 1, 0);
+    inputGrid.add(year, 2, 0);
+    inputGrid.add(Isearch, 4, 0);
+    inputGrid.add(Iclear, 5, 0);
+
+    Isearch.setOnAction(e -> {
+      if (farmID.getText().equals("")) {
+        csvTable.setItems(
+            FXCollections.observableArrayList(report.getFarmReport(null, year.getValue())));
+      } else {
+        csvTable.setItems(FXCollections
+            .observableArrayList(report.getFarmReport(farmID.getText(), year.getValue())));
+      }
+      csvTable.getSortOrder().add(csvTable.getColumns().get(0));
+    });
 
     Cfile.setOnAction(e -> {
       List<File> selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
@@ -195,12 +197,6 @@ public class Main extends Application {
     clearBoard();
     underliner(topB, 3);
 
-
-  }
-
-  private void showRange(Stage primaryStage) {
-    clearBoard();
-    underliner(topB, 4);
 
   }
 
@@ -234,17 +230,16 @@ public class Main extends Application {
     farmChart = new PieChart();
     monthChart = new PieChart();
     yearChart = new PieChart();
-    topB = new Button[] {new Button("DATA"), new Button("FARM"), new Button("ANNUAL"),
-        new Button("MONTHLY"), new Button("RANGE")};
     rightBottom = new HBox();
     d_grid = new GridPane();
+    topB = new Button[] {new Button("DATA"), new Button("FARM"), new Button("ANNUAL"),
+        new Button("MONTHLY")};
 
     csvTable.setItems(dataList);
     csvTable.setFocusTraversable(false);
     csvTable.prefHeightProperty().bind(primaryStage.heightProperty());
-    csvTable.prefWidthProperty()
-        .bind(topB[0].widthProperty().add(topB[1].widthProperty()).add(topB[2].widthProperty())
-            .add(topB[3].widthProperty()).add(topB[4].widthProperty()).add(60));
+    csvTable.prefWidthProperty().bind(topB[0].widthProperty().add(topB[1].widthProperty())
+        .add(topB[2].widthProperty()).add(topB[3].widthProperty()).add(80));
     for (Button b : topB)
       b.setFocusTraversable(false);
 
@@ -264,14 +259,11 @@ public class Main extends Application {
       showMonthly(primaryStage);
 
     });
-    topB[4].setOnAction(e -> {
-      showRange(primaryStage);
-    });
 
     // leftpannel
     leftTop.setPadding(new Insets(10));
     leftTop.setSpacing(10);
-    leftTop.getChildren().addAll(topB[0], topB[1], topB[2], topB[3], topB[4]);
+    leftTop.getChildren().addAll(topB[0], topB[1], topB[2], topB[3]);
     leftPanel.getChildren().addAll(leftTop, csvTable);
     root.setLeft(leftPanel);
 
@@ -293,14 +285,15 @@ public class Main extends Application {
 
     Iclear.setOnAction(e -> {
       farmID.clear();
-      month.getItems().clear();
-      day.getItems().clear();
-      dyear.setPromptText("YEAR");
-      dmonth.setPromptText("MONTH");
-      dday.setPromptText("DAY");
+      year.getSelectionModel().clearSelection();
+      month.getSelectionModel().clearSelection();
+      day.getSelectionModel().clearSelection();
       year.setPromptText("YEAR");
+      dyear.setPromptText("YEAR");
       month.setPromptText("MONTH");
+      dmonth.setPromptText("MONTH");
       day.setPromptText("DAY");
+      dday.setPromptText("DAY");
       farmID.setPromptText("Enter a farm ID");
     });
 
@@ -402,7 +395,7 @@ public class Main extends Application {
       fn[i] = new TableColumn<>(columns[i]);
       fn[i].setCellValueFactory(new PropertyValueFactory<>("f" + (i + 1)));
       fn[i].prefWidthProperty().bind(csvTable.widthProperty()
-          .divide((columns.length + 1) * columns.length / 2).multiply(i + 1));
+          .divide((columns.length + 2) * (columns.length + 1) / 2 - 1).multiply(i + 2));
       csvTable.getColumns().add(fn[i]);
     }
     csvTable.getSortOrder().add(fn[0]);
