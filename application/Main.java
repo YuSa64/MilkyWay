@@ -82,7 +82,8 @@ public class Main extends Application {
     setTableColumn("FARM", "DATE", "WEIGHT");
     csvTable.getSortOrder().add(csvTable.getColumns().get(1));
 
-
+    inputGrid.add(new Label("FROM"), 0, 0);
+    inputGrid.add(new Label("TO"), 0, 1);
     inputGrid.add(year, 1, 0);
     inputGrid.add(month, 2, 0);
     inputGrid.add(day, 3, 0);
@@ -126,7 +127,6 @@ public class Main extends Application {
     csvTable
         .setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(null, null)));
     setTableColumn("MONTH", "PERCENTAGE", "TOTAL WEIGHT");
-
 
     inputGrid.add(farmID, 1, 0);
     inputGrid.add(year, 2, 0);
@@ -299,21 +299,13 @@ public class Main extends Application {
     Iclear.prefWidthProperty().bind(inputGrid.widthProperty().divide(7));
 
     Iclear.setOnAction(e -> {
-      farmID.clear();
-      year.getSelectionModel().clearSelection();
-      month.getSelectionModel().clearSelection();
-      day.getSelectionModel().clearSelection();
-      year.setPromptText("YEAR");
-      dyear.setPromptText("YEAR");
-      month.setPromptText("MONTH");
-      dmonth.setPromptText("MONTH");
-      day.setPromptText("DAY");
-      dday.setPromptText("DAY");
-      farmID.setPromptText("Enter a farm ID");
+      clearInput();
     });
 
     farmID = new TextField();
+    farmID.setFocusTraversable(false);
     farmID.setPromptText("Enter a farm ID");
+
     year = new ComboBox<String>();
     year.setFocusTraversable(false);
     year.setPromptText("YEAR");
@@ -429,13 +421,27 @@ public class Main extends Application {
     csvTable.getSortOrder().add(fn[0]);
   }
 
+  private void clearInput() {
+    farmID.clear();
+    year.getSelectionModel().clearSelection();
+    month.getSelectionModel().clearSelection();
+    day.getSelectionModel().clearSelection();
+    year.setPromptText("YEAR");
+    month.setPromptText("MONTH");
+    day.setPromptText("DAY");
+    farmID.setPromptText("Enter a farm ID");
+    dyear.setPromptText("YEAR");
+    dmonth.setPromptText("MONTH");
+    dday.setPromptText("DAY");
+  }
+
   private void clearBoard() {
     csvTable.getColumns().clear();
     inputGrid.getChildren().clear();
-
     chartMaker(monthChart, "MONTHLY", 0);
     chartMaker(farmChart, "FARM", 1);
     chartMaker(yearChart, "ANNUAL", 2);
+    clearInput();
   }
 
   public static void main(String[] args) {
