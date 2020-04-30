@@ -44,8 +44,13 @@ public class Main extends Application {
   private TextField farmID;
   private ComboBox<String> year, month, day, dyear, dmonth, dday;
 
+  /**
+   * 
+   * @param chart
+   * @param name
+   * @param type
+   */
   private void chartMaker(PieChart chart, String name, int type) {
-
     ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
     List<Farm> farmList;
     switch (type) {
@@ -74,6 +79,10 @@ public class Main extends Application {
     chart.setLabelsVisible(true);
   }
 
+  /**
+   * 
+   * @param primaryStage
+   */
   private void showData(Stage primaryStage) {
     clearBoard();
     underliner(topB, 0);
@@ -106,13 +115,7 @@ public class Main extends Application {
       List<File> selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
       if (selectedFiles != null)
         for (File f : selectedFiles) {
-          // try {
           report.readCSV(f);
-          // } catch (NumberFormatException nfe) {
-          // setTableColumn("NOpe", "yep", "nope");
-          // } catch (StringIndexOutOfBoundsException nfe) {
-          // setTableColumn("NOpe", "yep", "nope");
-          // }
         }
       total.setText(report.getTotalWeight() + "");
       showData(primaryStage);
@@ -120,6 +123,10 @@ public class Main extends Application {
 
   }
 
+  /**
+   * 
+   * @param primaryStage
+   */
   private void showFarm(Stage primaryStage) {
     clearBoard();
     underliner(topB, 1);
@@ -156,6 +163,10 @@ public class Main extends Application {
 
   }
 
+  /**
+   * 
+   * @param primaryStage
+   */
   private void showAnnual(Stage primaryStage) {
     clearBoard();
     underliner(topB, 2);
@@ -183,6 +194,10 @@ public class Main extends Application {
     });
   }
 
+  /**
+   * 
+   * @param primaryStage
+   */
   private void showMonthly(Stage primaryStage) {
     clearBoard();
     underliner(topB, 3);
@@ -213,12 +228,20 @@ public class Main extends Application {
     });
   }
 
+  /**
+   * 
+   * @param buttons
+   * @param index
+   */
   private void underliner(Button[] buttons, int index) {
     for (Button b : buttons)
       b.setUnderline(false);
     buttons[index].setUnderline(true);
   }
 
+  /**
+   * 
+   */
   @Override
   public void start(Stage primaryStage) throws Exception {
     primaryStage.setResizable(false);
@@ -229,6 +252,10 @@ public class Main extends Application {
     primaryStage.show();
   }
 
+  /**
+   * 
+   * @param primaryStage
+   */
   private void setupScene(Stage primaryStage) {
     root = new BorderPane();
     mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -407,8 +434,11 @@ public class Main extends Application {
     rightPanel.getChildren().addAll(rightTop, d_grid, rightBottom);
   }
 
+  /**
+   * 
+   * @param columns
+   */
   private void setTableColumn(String... columns) {
-
     TableColumn[] fn = new TableColumn[columns.length];
     int i;
     for (i = 0; i < columns.length; i++) {
@@ -421,6 +451,9 @@ public class Main extends Application {
     csvTable.getSortOrder().add(fn[0]);
   }
 
+  /**
+   * 
+   */
   private void clearInput() {
     farmID.clear();
     year.getSelectionModel().clearSelection();
@@ -435,6 +468,9 @@ public class Main extends Application {
     dday.setPromptText("DAY");
   }
 
+  /**
+   * 
+   */
   private void clearBoard() {
     csvTable.getColumns().clear();
     inputGrid.getChildren().clear();
@@ -444,6 +480,10 @@ public class Main extends Application {
     clearInput();
   }
 
+  /**
+   * 
+   * @param args
+   */
   public static void main(String[] args) {
     launch(args);
   }

@@ -22,6 +22,9 @@ public class FarmReport {
   Alert a;
   TextArea message;
 
+  /**
+   * 
+   */
   public FarmReport() {
     dataSet = new HashSet<Farm>();
     totalWeight = 0;
@@ -31,6 +34,10 @@ public class FarmReport {
     a.getDialogPane().setContent(message);
   }
 
+  /**
+   * 
+   * @param farm
+   */
   public void add(Farm farm) {
     for (Farm f : dataSet) {
       if (f.equals(farm))
@@ -39,14 +46,28 @@ public class FarmReport {
     dataSet.add(farm);
   }
 
+  /**
+   * 
+   * @return
+   */
   public List<Farm> getAllList() {
     return new ArrayList<Farm>(dataSet);
   }
 
+  /**
+   * 
+   * @return
+   */
   public int getTotalWeight() {
     return totalWeight;
   }
 
+  /**
+   * 
+   * @param year
+   * @param month
+   * @return
+   */
   private int getTargetWeight(String year, String month) {
     int output = 0;
     List<Farm> list = getRangeReport(null, year, month, null, null, year, month, null);
@@ -58,6 +79,12 @@ public class FarmReport {
     return output;
   }
 
+  /**
+   * 
+   * @param year
+   * @param month
+   * @return
+   */
   public List<Farm> getMonthlyReport(String year, String month) {
     List<Farm> list = getRangeReport(null, year, month, null, null, year, month, null);
     ArrayList<Farm> output = new ArrayList<Farm>();
@@ -78,6 +105,11 @@ public class FarmReport {
     return output;
   }
 
+  /**
+   * 
+   * @param year
+   * @return
+   */
   public List<Farm> getAnnualReport(String year) {
     List<Farm> list = getRangeReport(null, year, null, null, null, year, null, null);
     ArrayList<Farm> output = new ArrayList<Farm>();
@@ -98,7 +130,12 @@ public class FarmReport {
     return output;
   }
 
-
+  /**
+   * 
+   * @param farm_id
+   * @param year
+   * @return
+   */
   public List<Farm> getFarmReport(String farm_id, String year) {
     List<Farm> list = getRangeReport(farm_id, year, null, null, farm_id, year, null, null);
     HashMap<String, String> map = new HashMap<String, String>();
@@ -120,6 +157,10 @@ public class FarmReport {
     return output;
   }
 
+  /**
+   * 
+   * @return
+   */
   public List<Farm> getAnnual() {
     List<Farm> list = getRangeReport(null, null, null, null, null, null, null, null);
     HashMap<String, String> map = new HashMap<String, String>();
@@ -157,7 +198,6 @@ public class FarmReport {
       String dyear, String dmonth, String dday) {
     ArrayList<Farm> output = new ArrayList<Farm>();
     HashMap<String, String> map = new HashMap<String, String>();
-
     String s_id, s_year, s_month, s_day, d_id, d_year, d_month, d_day;
     if (sid == null)
       s_id = "000";
@@ -191,10 +231,8 @@ public class FarmReport {
       d_day = "31";
     else
       d_day = dday;
-
     String skey = s_year + "-" + s_month + "-" + s_day;
     String dkey = d_year + "-" + d_month + "-" + d_day;
-
     for (Farm f : dataSet) {
       String key = f.getF1();
       String datekey = f.getF2();
@@ -214,11 +252,13 @@ public class FarmReport {
     return output;
   }
 
+  /**
+   * 
+   * @param f
+   */
   public void readCSV(File f) {
-
     String FieldDelimiter = ",";
     BufferedReader br;
-
     try {
       br = new BufferedReader(new FileReader(f));
       String line;
@@ -226,25 +266,21 @@ public class FarmReport {
         try {
           String[] fields = line.split(FieldDelimiter, -1);
           if (!fields[1].equals("farm_id")) {
-
             String farm_id = fields[1];
             String date = fields[0];
             String pweight = fields[2];
             int weight = 0;
-
             farm_id = farm_id.substring(5);
             Integer.parseInt(farm_id);
             while (farm_id.length() < 3) {
               farm_id = "0" + farm_id;
             }
-
             String[] tempDate = date.split("-");
             while (tempDate[1].length() < 2)
               tempDate[1] = "0" + tempDate[1];
             while (tempDate[2].length() < 2)
               tempDate[2] = "0" + tempDate[2];
             String inDate = tempDate[0] + "-" + tempDate[1] + "-" + tempDate[2];
-
             weight = Integer.parseInt(pweight);
             totalWeight += weight;
             add(new Farm(farm_id, inDate, weight + ""));
@@ -255,7 +291,8 @@ public class FarmReport {
             message.setText("File contains missing or invalid data: " + ex.getMessage());
             a.show();
           } else {
-            message.setText(message.getText() + "\nFile contains missing or invalid data: " + ex.getMessage());
+            message.setText(
+                message.getText() + "\nFile contains missing or invalid data: " + ex.getMessage());
           }
         }
       }
