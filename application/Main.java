@@ -59,10 +59,10 @@ public class Main extends Application {
         break;
       case 1:
 
-        farmList = report.getMonthlyReport(null, null);
+        farmList = report.getAnnualMonthlyReport(null, null);
         break;
       case 2:
-        farmList = report.getAnnual();
+        farmList = report.getAnnualData();
         break;
       default:
         farmList = report.getAllList();
@@ -171,7 +171,7 @@ public class Main extends Application {
     clearBoard();
     underliner(topB, 2);
 
-    csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAnnualReport(null)));
+    csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAnnualMonthlyReport(null, null)));
     setTableColumn("FARM", "PERCENTAGE", "TOTAL WEIGHT");
 
     inputGrid.add(year, 1, 0);
@@ -179,7 +179,7 @@ public class Main extends Application {
     inputGrid.add(Iclear, 5, 0);
 
     Isearch.setOnAction(e -> {
-      csvTable.setItems(FXCollections.observableArrayList(report.getAnnualReport(year.getValue())));
+      csvTable.setItems(FXCollections.observableArrayList(report.getAnnualMonthlyReport(year.getValue(), null)));
       csvTable.getSortOrder().add(csvTable.getColumns().get(0));
     });
 
@@ -203,7 +203,7 @@ public class Main extends Application {
     underliner(topB, 3);
 
     csvTable.setItems(
-        dataList = FXCollections.observableArrayList(report.getMonthlyReport(null, null)));
+        dataList = FXCollections.observableArrayList(report.getAnnualMonthlyReport(null, null)));
     setTableColumn("FARM", "PERCENTAGE", "TOTAL WEIGHT");
 
     inputGrid.add(year, 1, 0);
@@ -213,7 +213,7 @@ public class Main extends Application {
 
     Isearch.setOnAction(e -> {
       csvTable.setItems(FXCollections
-          .observableArrayList(report.getMonthlyReport(year.getValue(), month.getValue())));
+          .observableArrayList(report.getAnnualMonthlyReport(year.getValue(), month.getValue())));
       csvTable.getSortOrder().add(csvTable.getColumns().get(0));
     });
 

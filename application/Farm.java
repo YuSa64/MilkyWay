@@ -2,36 +2,38 @@ package application;
 
 import javafx.beans.property.SimpleStringProperty;
 
+/**
+ * Node class to store data in three Strings.
+ * @author Jun
+ *
+ */
 public class Farm {
-  private SimpleStringProperty f1, f2, f3;
+  private SimpleStringProperty f1, f2, f3; //Properties for Data Table
 
   /**
-   * 
-   * @return
+   * Returns String of f1
+   * @return f1
    */
   public String getF1() {
     return f1.get();
   }
 
   /**
-   * 
-   * @return
+   * Returns String of f2
+   * @return f2
    */
   public String getF2() {
     return f2.get();
   }
 
   /**
-   * 
-   * @return
+   * Returns String of f3
+   * @return f3
    */
   public String getF3() {
     return f3.get();
   }
 
-  /**
-   * 
-   */
   @Override
   public boolean equals(Object o) {
     if(o instanceof Farm) {
@@ -45,14 +47,14 @@ public class Farm {
   }
   
   /**
-   * 
-   * @param farm_id
-   * @param date
-   * @param weight
+   * Constructor of Farm
+   * @param f1 - First String Property (usually Farm ID)
+   * @param f2 - Second String Property (usually Date)
+   * @param f3 - Third String Property (usually Weight)
    */
-  public Farm(String farm_id, String date, String weight) {
-    this.f1 = new SimpleStringProperty(farm_id);
-    this.f2 = new SimpleStringProperty(date);
-    this.f3 = new SimpleStringProperty(weight);
+  public Farm(String f1, String f2, String f3) {
+    this.f1 = new SimpleStringProperty(f1);
+    this.f2 = new SimpleStringProperty(f2);
+    this.f3 = new SimpleStringProperty(f3);
   }
 }
