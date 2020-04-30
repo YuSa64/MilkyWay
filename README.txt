@@ -15,3 +15,11 @@ Which team members were on same xteam together?
 xTeam 104: Jun Jeong, Andrew McGrath
 
 Other notes or comments to the grader:
+
+Screenshot_1-1: Data/Range tab without user input
+Screenshot_1-2: Data/Range tab with user input
+Screenshot_2-1: Farm tab without user input
+Screenshot_2-2: Farm tab with user input
+Screenshot_3: Annual tab
+Screenshot_4-1: Monthly tab without user input
+Screenshot_4-1: Monthly tab with user input
