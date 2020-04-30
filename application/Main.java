@@ -36,7 +36,7 @@ public class Main extends Application {
   private FarmReport report; // FarmReport of program
   private Button[] tabB; // Tab Buttons
   private FileChooser fileChooser; // FileChooser to choose file
-  private Label total; // Label to display Total Weight
+  private Label total, average; // Label to display Total Weight, Average Weight
   private Button Cfile, Isearch, Iclear; // Button to Choose File, Search by input, Clear input
   private GridPane chartgrid, inputGrid; // Grid for PieChart and input section
   private PieChart farmChart, monthChart, yearChart; // PieChart for farm, month, year
@@ -88,9 +88,11 @@ public class Main extends Application {
     clearTab();
     underliner(tabB, 0);
 
+
     csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
     setTableColumn("FARM", "DATE", "WEIGHT");
     csvTable.getSortOrder().add(csvTable.getColumns().get(1));
+
 
     inputGrid.add(new Label("FROM"), 0, 0);
     inputGrid.add(new Label("TO"), 0, 1);
@@ -103,12 +105,26 @@ public class Main extends Application {
     inputGrid.add(Isearch, 4, 0);
     inputGrid.add(Iclear, 5, 0);
 
+    average.setText(
+        "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+            + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+            + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+            + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+            + "\nTable Average Weight: \n"
+            + report.getDailyAverage(null, null, null, null, null, null));
 
     Isearch.setOnAction(e -> {
       csvTable.setItems(FXCollections
           .observableArrayList(report.getRangeReport(null, year.getValue(), month.getValue(),
               day.getValue(), null, dyear.getValue(), dmonth.getValue(), dday.getValue())));
       csvTable.getSortOrder().add(csvTable.getColumns().get(0));
+      average.setText("Average Daily Weight: \n"
+          + report.getDailyAverage(null, null, null, null, null, null)
+          + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+          + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+          + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+          + "\nTable Average Weight: \n" + report.getDailyAverage(year.getValue(), month.getValue(),
+              day.getValue(), dyear.getValue(), dmonth.getValue(), dday.getValue()));
     });
 
     Cfile.setOnAction(e -> {
@@ -118,7 +134,14 @@ public class Main extends Application {
         for (File f : selectedFiles) {
           report.readCSV(f);
         }
-      total.setText(report.getTotalWeight() + "");
+      total.setText("Total Weight: " + report.getTotalWeight());
+      average.setText(
+          "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+              + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+              + "\nTable Average Weight: \n"
+              + report.getDailyAverage(null, null, null, null, null, null));
       showData(primaryStage);
     });
 
@@ -141,16 +164,37 @@ public class Main extends Application {
     inputGrid.add(year, 2, 0);
     inputGrid.add(Isearch, 4, 0);
     inputGrid.add(Iclear, 5, 0);
+    
+    average.setText(
+        "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+            + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+            + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+            + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+            + "\nTable Average Weight: \n" + report.getMonthlyAverage(null, null));
 
     Isearch.setOnAction(e -> {
       if (farmID.getText().equals("")) {
         csvTable.setItems(
             FXCollections.observableArrayList(report.getFarmReport(null, year.getValue())));
+        average.setText(
+            "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+                + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+                + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+                + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+                + "\nTable Average Weight: \n" + report.getMonthlyAverage(null, year.getValue()));
       } else {
         csvTable.setItems(FXCollections
             .observableArrayList(report.getFarmReport(farmID.getText(), year.getValue())));
+        average.setText(
+            "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+                + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+                + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+                + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+                + "\nTable Average Weight: \n"
+                + report.getMonthlyAverage(farmID.getText(), year.getValue()));
       }
       csvTable.getSortOrder().add(csvTable.getColumns().get(0));
+
     });
 
     Cfile.setOnAction(e -> {
@@ -159,7 +203,13 @@ public class Main extends Application {
         for (File f : selectedFiles) {
           report.readCSV(f);
         }
-      total.setText(report.getTotalWeight() + "");
+      total.setText("Total Weight: " + report.getTotalWeight());
+      average.setText(
+          "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+              + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+              + "\nTable Average Weight: \n" + report.getMonthlyAverage(null, null));
       showFarm(primaryStage);
     });
 
@@ -181,10 +231,23 @@ public class Main extends Application {
     inputGrid.add(year, 1, 0);
     inputGrid.add(Isearch, 4, 0);
     inputGrid.add(Iclear, 5, 0);
+    
+    average.setText(
+        "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+            + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+            + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+            + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+            + "\nTable Average Weight: \n" + report.getFarmAverage(null, null));
 
     Isearch.setOnAction(e -> {
       csvTable.setItems(
           FXCollections.observableArrayList(report.getAnnualMonthlyReport(year.getValue(), null)));
+      average.setText(
+          "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+              + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+              + "\nTable Average Weight: \n" + report.getFarmAverage(year.getValue(), null));
       csvTable.getSortOrder().add(csvTable.getColumns().get(0));
     });
 
@@ -194,7 +257,13 @@ public class Main extends Application {
         for (File f : selectedFiles) {
           report.readCSV(f);
         }
-      total.setText(report.getTotalWeight() + "");
+      total.setText("Total Weight: " + report.getTotalWeight());
+      average.setText(
+          "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+              + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+              + "\nTable Average Weight: \n" + report.getFarmAverage(null, null));
       showAnnual(primaryStage);
     });
   }
@@ -216,11 +285,25 @@ public class Main extends Application {
     inputGrid.add(month, 2, 0);
     inputGrid.add(Isearch, 4, 0);
     inputGrid.add(Iclear, 5, 0);
+    
+    average.setText(
+        "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+            + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+            + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+            + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+            + "\nTable Average Weight: \n" + report.getFarmAverage(null, null));
 
     Isearch.setOnAction(e -> {
       csvTable.setItems(FXCollections
           .observableArrayList(report.getAnnualMonthlyReport(year.getValue(), month.getValue())));
       csvTable.getSortOrder().add(csvTable.getColumns().get(0));
+      average.setText(
+          "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+              + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+              + "\nTable Average Weight: \n"
+              + report.getFarmAverage(year.getValue(), month.getValue()));
     });
 
     Cfile.setOnAction(e -> {
@@ -229,7 +312,13 @@ public class Main extends Application {
         for (File f : selectedFiles) {
           report.readCSV(f);
         }
-      total.setText(report.getTotalWeight() + "");
+      total.setText("Total Weight: " + report.getTotalWeight());
+      average.setText(
+          "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+              + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+              + "\nTable Average Weight: \n" + report.getFarmAverage(null, null));
       showMonthly(primaryStage);
     });
   }
@@ -273,6 +362,7 @@ public class Main extends Application {
     csvTable = new TableView<>();
     report = new FarmReport();
     total = new Label();
+    average = new Label();
     dataList = FXCollections.observableArrayList(report.getAllList());
     farmChart = new PieChart();
     monthChart = new PieChart();
@@ -407,6 +497,14 @@ public class Main extends Application {
     chartgrid.add(farmChart, 0, 1);
     chartgrid.add(monthChart, 1, 1);
     chartgrid.add(yearChart, 0, 2);
+    chartgrid.add(average, 1, 2);
+    average.setText(
+        "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
+            + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
+            + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+            + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
+            + "\nTable Average Weight: \n"
+            + report.getDailyAverage(null, null, null, null, null, null));
     farmChart.prefWidthProperty().bind(chartgrid.widthProperty().divide(2));
     monthChart.prefWidthProperty().bind(chartgrid.widthProperty().divide(2));
     yearChart.prefWidthProperty().bind(chartgrid.widthProperty().divide(2));
@@ -416,13 +514,9 @@ public class Main extends Application {
     chartgrid.add(s_label, 0, 0);
 
     // Right Bottom Setup
-    Label totalWt = new Label("Total Weight:");
-    total.setText(report.getTotalWeight() + "");
-    totalWt.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
-    totalWt.setFont(new Font(new Label().getFont().getName(), 16));
-    total.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
+    total.setText("Total Weight: " + report.getTotalWeight());
     total.setFont(new Font(new Label().getFont().getName(), 16));
-    rightBottom.getChildren().addAll(totalWt, total);
+    rightBottom.getChildren().addAll(total);
 
     // Right Pannel Setup
     rightTop.getChildren().addAll(Cfile, inputGrid);

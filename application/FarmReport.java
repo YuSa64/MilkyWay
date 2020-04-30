@@ -108,26 +108,6 @@ public class FarmReport {
     }
   }
 
-
-  /**
-   * Return total weight of all data
-   * 
-   * @return Total Weight
-   */
-  public int getTotalWeight() {
-    return totalWeight;
-  }
-
-
-  /**
-   * Return list of All Farm in HashSet
-   * 
-   * @return List<Farm> where Farm(Farm ID, Date, Weight)
-   */
-  public List<Farm> getAllList() {
-    return new ArrayList<Farm>(dataSet);
-  }
-
   /**
    * Return list of targeted Farms. Null for argument is equal to all. All arguments are inclusive.
    * 
@@ -200,24 +180,6 @@ public class FarmReport {
   }
 
   /**
-   * Return weight of specific year and month
-   * 
-   * @param year - target year (null for all year)
-   * @param month - target month (null for all month)
-   * @return Total Weight of target year and month
-   */
-  private int getTargetWeight(String year, String month) {
-    int output = 0;
-    List<Farm> list = getRangeReport(null, year, month, null, null, year, month, null);
-    for (Farm f : list) {
-      if ((month == null || f.getF2().substring(5, 7).equals(month))
-          && (year == null || f.getF2().substring(0, 4).equals(year)))
-        output += Integer.parseInt(f.getF3());
-    }
-    return output;
-  }
-
-  /**
    * Return List of Farm at specific year and month
    * 
    * @param year - target year (null for all year)
@@ -243,6 +205,7 @@ public class FarmReport {
     }
     return output;
   }
+
 
   /**
    * Return List of Farm at specific id and year
@@ -273,7 +236,7 @@ public class FarmReport {
   }
 
   /**
-   * Return List of Farm for Annual PieChart
+   * Return List of Farm for Annual Data
    * 
    * @return List<Farm> where Farm(Year, , Total Weight of Year)
    */
@@ -294,4 +257,115 @@ public class FarmReport {
     return output;
   }
 
+  /**
+   * Return total weight of all data
+   * 
+   * @return Total Weight
+   */
+  public int getTotalWeight() {
+    return totalWeight;
+  }
+
+
+  /**
+   * Return list of All Farm in HashSet
+   * 
+   * @return List<Farm> where Farm(Farm ID, Date, Weight)
+   */
+  public List<Farm> getAllList() {
+    return new ArrayList<Farm>(dataSet);
+  }
+
+  /**
+   * Return weight of specific year and month
+   * 
+   * @param year - target year (null for all year)
+   * @param month - target month (null for all month)
+   * @return Total Weight of target year and month
+   */
+  private int getTargetWeight(String year, String month) {
+    int output = 0;
+    List<Farm> list = getRangeReport(null, year, month, null, null, year, month, null);
+    for (Farm f : list) {
+      if ((month == null || f.getF2().substring(5, 7).equals(month))
+          && (year == null || f.getF2().substring(0, 4).equals(year)))
+        output += Integer.parseInt(f.getF3());
+    }
+    return output;
+  }
+
+  /**
+   * Return daily average weight
+   * 
+   * @param syear - starting year
+   * @param smonth - starting month
+   * @param sday - starting day
+   * @param dyear - ending year
+   * @param dmonth - ending month
+   * @param dday - ending day
+   * @return Daily Average Weight
+   */
+  public int getDailyAverage(String syear, String smonth, String sday, String dyear, String dmonth,
+      String dday) {
+    List<Farm> list = getRangeReport(null, syear, smonth, sday, null, dyear, dmonth, dday);
+    int output = 0;
+    for (Farm f : list)
+      output += Integer.parseInt(f.getF3());
+    if (list.size() != 0)
+      return output / list.size();
+    else
+      return 0;
+  }
+
+  /**
+   * Return Farm Average Weight
+   * 
+   * @param year - target year (null for all year)
+   * @param month - target month (null for all month)
+   * @return Farm Average Weight
+   */
+  public int getFarmAverage(String year, String month) {
+    List<Farm> list = getAnnualMonthlyReport(year, month);
+    int output = 0;
+    for (Farm f : list)
+      output += Integer.parseInt(f.getF3());
+    if (list.size() != 0)
+      return output / list.size();
+    else
+      return 0;
+  }
+
+  /**
+   * Return Monthly Average Weight
+   * 
+   * @param farm_id - target id (null for all id)
+   * @param year - target year (null for all year)
+   * @return Monthly Average Weight
+   */
+  public int getMonthlyAverage(String farm_id, String year) {
+    List<Farm> list = getFarmReport(farm_id, year);
+    int output = 0;
+    for (Farm f : list)
+      output += Integer.parseInt(f.getF3());
+    if (list.size() != 0)
+      return output / list.size();
+    else
+      return 0;
+  }
+
+  /**
+   * Return Annual Average Weight
+   * 
+   * @return Annual Average Weight
+   */
+  public int getAnnualAverage() {
+    List<Farm> list = getAnnualData();
+    int output = 0;
+    for (Farm f : list)
+      output += Integer.parseInt(f.getF3());
+    if (list.size() != 0)
+      return output / list.size();
+    else
+      return 0;
+  }
 }
