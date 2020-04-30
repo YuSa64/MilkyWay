@@ -37,7 +37,7 @@ public class Main extends Application {
   private Button[] tabB; // Tab Buttons
   private FileChooser fileChooser; // FileChooser to choose file
   private Label total, average; // Label to display Total Weight, Average Weight
-  private Button Cfile, Isearch, Iclear; // Button to Choose File, Search by input, Clear input
+  private Button selectfile, Isearch, Iclear; // Button to Choose File, Search by input, Clear input
   private GridPane chartgrid, inputGrid; // Grid for PieChart and input section
   private PieChart farmChart, monthChart, yearChart; // PieChart for farm, month, year
   private ObservableList<Farm> dataList; // List for TableView
@@ -108,7 +108,7 @@ public class Main extends Application {
     average.setText(
         "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
             + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-            + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+            + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
             + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
             + "\nTable Average Weight: \n"
             + report.getDailyAverage(null, null, null, null, null, null));
@@ -117,18 +117,17 @@ public class Main extends Application {
       csvTable.setItems(FXCollections
           .observableArrayList(report.getRangeReport(null, year.getValue(), month.getValue(),
               day.getValue(), null, dyear.getValue(), dmonth.getValue(), dday.getValue())));
-      csvTable.getSortOrder().add(csvTable.getColumns().get(0));
+      csvTable.getSortOrder().addAll(csvTable.getColumns().get(0), csvTable.getColumns().get(1));
       average.setText("Average Daily Weight: \n"
           + report.getDailyAverage(null, null, null, null, null, null)
           + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-          + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+          + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
           + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
           + "\nTable Average Weight: \n" + report.getDailyAverage(year.getValue(), month.getValue(),
               day.getValue(), dyear.getValue(), dmonth.getValue(), dday.getValue()));
     });
 
-    Cfile.setOnAction(e -> {
-
+    selectfile.setOnAction(e -> {
       List<File> selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
       if (selectedFiles != null)
         for (File f : selectedFiles) {
@@ -138,7 +137,7 @@ public class Main extends Application {
       average.setText(
           "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
               + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
               + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
               + "\nTable Average Weight: \n"
               + report.getDailyAverage(null, null, null, null, null, null));
@@ -168,7 +167,7 @@ public class Main extends Application {
     average.setText(
         "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
             + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-            + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+            + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
             + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
             + "\nTable Average Weight: \n" + report.getMonthlyAverage(null, null));
 
@@ -179,7 +178,7 @@ public class Main extends Application {
         average.setText(
             "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
                 + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-                + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+                + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
                 + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
                 + "\nTable Average Weight: \n" + report.getMonthlyAverage(null, year.getValue()));
       } else {
@@ -188,7 +187,7 @@ public class Main extends Application {
         average.setText(
             "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
                 + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-                + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+                + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
                 + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
                 + "\nTable Average Weight: \n"
                 + report.getMonthlyAverage(farmID.getText(), year.getValue()));
@@ -197,7 +196,7 @@ public class Main extends Application {
 
     });
 
-    Cfile.setOnAction(e -> {
+    selectfile.setOnAction(e -> {
       List<File> selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
       if (selectedFiles != null)
         for (File f : selectedFiles) {
@@ -207,7 +206,7 @@ public class Main extends Application {
       average.setText(
           "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
               + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
               + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
               + "\nTable Average Weight: \n" + report.getMonthlyAverage(null, null));
       showFarm(primaryStage);
@@ -235,7 +234,7 @@ public class Main extends Application {
     average.setText(
         "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
             + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-            + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+            + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
             + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
             + "\nTable Average Weight: \n" + report.getFarmAverage(null, null));
 
@@ -245,13 +244,13 @@ public class Main extends Application {
       average.setText(
           "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
               + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
               + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
               + "\nTable Average Weight: \n" + report.getFarmAverage(year.getValue(), null));
       csvTable.getSortOrder().add(csvTable.getColumns().get(0));
     });
 
-    Cfile.setOnAction(e -> {
+    selectfile.setOnAction(e -> {
       List<File> selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
       if (selectedFiles != null)
         for (File f : selectedFiles) {
@@ -261,7 +260,7 @@ public class Main extends Application {
       average.setText(
           "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
               + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
               + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
               + "\nTable Average Weight: \n" + report.getFarmAverage(null, null));
       showAnnual(primaryStage);
@@ -289,7 +288,7 @@ public class Main extends Application {
     average.setText(
         "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
             + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-            + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+            + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
             + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
             + "\nTable Average Weight: \n" + report.getFarmAverage(null, null));
 
@@ -300,13 +299,13 @@ public class Main extends Application {
       average.setText(
           "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
               + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
               + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
               + "\nTable Average Weight: \n"
               + report.getFarmAverage(year.getValue(), month.getValue()));
     });
 
-    Cfile.setOnAction(e -> {
+    selectfile.setOnAction(e -> {
       List<File> selectedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
       if (selectedFiles != null)
         for (File f : selectedFiles) {
@@ -316,7 +315,7 @@ public class Main extends Application {
       average.setText(
           "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
               + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-              + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+              + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
               + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
               + "\nTable Average Weight: \n" + report.getFarmAverage(null, null));
       showMonthly(primaryStage);
@@ -415,8 +414,8 @@ public class Main extends Application {
 
     // Right Top Setup: FileChooser
     fileChooser.setInitialDirectory(new File("."));
-    Cfile = new Button("Select File(s)...");
-    Cfile.setFocusTraversable(false);
+    selectfile = new Button("Select File(s)...");
+    selectfile.setFocusTraversable(false);
 
     // Right Top Setup: User Input
     inputGrid.setHgap(10);
@@ -501,7 +500,7 @@ public class Main extends Application {
     average.setText(
         "Average Daily Weight: \n" + report.getDailyAverage(null, null, null, null, null, null)
             + "\nAverage Monthly Weight: \n" + report.getMonthlyAverage(null, null)
-            + "\nAverage Annual Weight: \n" + report.getFarmAverage(null, null)
+            + "\nAverage Annual Weight: \n" + report.getAnnualAverage()
             + "\nAverage Farm Weight: \n" + report.getFarmAverage(null, null)
             + "\nTable Average Weight: \n"
             + report.getDailyAverage(null, null, null, null, null, null));
@@ -519,7 +518,7 @@ public class Main extends Application {
     rightBottom.getChildren().addAll(total);
 
     // Right Pannel Setup
-    rightTop.getChildren().addAll(Cfile, inputGrid);
+    rightTop.getChildren().addAll(selectfile, inputGrid);
     rightTop.setSpacing(10);
     rightPanel.setPadding(new Insets(10));
     rightPanel.setSpacing(10);
