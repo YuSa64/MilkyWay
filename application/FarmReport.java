@@ -1,5 +1,6 @@
 package application;
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,14 +14,21 @@ import java.util.List;
 import java.util.Map;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TextArea;
 
 public class FarmReport {
   HashSet<Farm> dataSet;
   int totalWeight;
+  Alert a;
+  TextArea message;
 
   public FarmReport() {
     dataSet = new HashSet<Farm>();
     totalWeight = 0;
+    a = new Alert(AlertType.ERROR);
+    message = new TextArea();
+    message.setWrapText(true);
+    a.getDialogPane().setContent(message);
   }
 
   public void add(Farm farm) {
@@ -43,7 +51,8 @@ public class FarmReport {
     int output = 0;
     List<Farm> list = getRangeReport(null, year, month, null, null, year, month, null);
     for (Farm f : list) {
-      if ((month == null || f.getF2().substring(5, 7).equals(month)) && (year == null || f.getF2().substring(0,4).equals(year)))
+      if ((month == null || f.getF2().substring(5, 7).equals(month))
+          && (year == null || f.getF2().substring(0, 4).equals(year)))
         output += Integer.parseInt(f.getF3());
     }
     return output;
@@ -205,62 +214,58 @@ public class FarmReport {
     return output;
   }
 
-  public void readCSV(File f) throws NumberFormatException, StringIndexOutOfBoundsException {
+  public void readCSV(File f) {
 
     String FieldDelimiter = ",";
     BufferedReader br;
 
     try {
       br = new BufferedReader(new FileReader(f));
-
       String line;
       while ((line = br.readLine()) != null) {
-        String[] fields = line.split(FieldDelimiter, -1);
-        if (!fields[1].equals("farm_id")) {
+        try {
+          String[] fields = line.split(FieldDelimiter, -1);
+          if (!fields[1].equals("farm_id")) {
 
-          String farm_id = fields[1];
-          String date = fields[0];
-          String pweight = fields[2];
-          int weight = 0;
+            String farm_id = fields[1];
+            String date = fields[0];
+            String pweight = fields[2];
+            int weight = 0;
 
-          farm_id = farm_id.substring(5);
-          while (farm_id.length() < 3) {
-            farm_id = "0" + farm_id;
+            farm_id = farm_id.substring(5);
+            Integer.parseInt(farm_id);
+            while (farm_id.length() < 3) {
+              farm_id = "0" + farm_id;
+            }
+
+            String[] tempDate = date.split("-");
+            while (tempDate[1].length() < 2)
+              tempDate[1] = "0" + tempDate[1];
+            while (tempDate[2].length() < 2)
+              tempDate[2] = "0" + tempDate[2];
+            String inDate = tempDate[0] + "-" + tempDate[1] + "-" + tempDate[2];
+
+            weight = Integer.parseInt(pweight);
+            totalWeight += weight;
+            add(new Farm(farm_id, inDate, weight + ""));
           }
-
-          String[] tempDate = date.split("-");
-          while (tempDate[1].length() < 2)
-            tempDate[1] = "0" + tempDate[1];
-          while (tempDate[2].length() < 2)
-            tempDate[2] = "0" + tempDate[2];
-          String inDate = tempDate[0] + "-" + tempDate[1] + "-" + tempDate[2];
-
-          weight = Integer.parseInt(pweight);
-          totalWeight += weight;
-          add(new Farm(farm_id, inDate, weight + ""));
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException
+            | StringIndexOutOfBoundsException ex) {
+          if (!a.isShowing()) {
+            message.setText("File contains missing or invalid data: " + ex.getMessage());
+            a.show();
+          } else {
+            message.setText(message.getText() + "\nFile contains missing or invalid data: " + ex.getMessage());
+          }
         }
-
       }
 
     } catch (FileNotFoundException ex) {
-      Alert a = new Alert(AlertType.ERROR);
       a.setContentText("File(s) canno be found. Program halted.\n" + ex.getMessage());
       a.show();
     } catch (IOException ex) {
-      Alert a = new Alert(AlertType.ERROR);
       a.setContentText("Program halted.\n" + ex.getMessage());
       a.show();
-    } catch (NumberFormatException ex) {
-      Alert a = new Alert(AlertType.ERROR);
-      a.setContentText(
-          "File contains missing or invalid data. Program halted.\n" + ex.getMessage());
-      a.show();
-    } catch (StringIndexOutOfBoundsException ex) {
-      Alert a = new Alert(AlertType.ERROR);
-      a.setContentText(
-          "File contains missing or invalid data. Program halted.\n" + ex.getMessage());
-      a.show();
     }
-
   }
 }
