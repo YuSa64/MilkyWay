@@ -1,21 +1,14 @@
 package application;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Calendar;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -299,8 +292,10 @@ public class Main extends Application {
     inputGrid.setVgap(10);
 
     Isearch = new Button("Search");
+    Isearch.setFocusTraversable(false);
     Isearch.prefWidthProperty().bind(inputGrid.widthProperty().divide(7));
     Iclear = new Button("Clear");
+    Iclear.setFocusTraversable(false);
     Iclear.prefWidthProperty().bind(inputGrid.widthProperty().divide(7));
 
     Iclear.setOnAction(e -> {
@@ -320,10 +315,13 @@ public class Main extends Application {
     farmID = new TextField();
     farmID.setPromptText("Enter a farm ID");
     year = new ComboBox<String>();
+    year.setFocusTraversable(false);
     year.setPromptText("YEAR");
     month = new ComboBox<String>();
+    month.setFocusTraversable(false);
     month.setPromptText("MONTH");
     day = new ComboBox<String>();
+    day.setFocusTraversable(false);
     day.setPromptText("DAY");
     for (int i = 2000; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
       year.getItems().add(i + "");
@@ -351,10 +349,13 @@ public class Main extends Application {
     });
 
     dyear = new ComboBox<String>();
+    dyear.setFocusTraversable(false);
     dyear.setPromptText("YEAR");
     dmonth = new ComboBox<String>();
+    dmonth.setFocusTraversable(false);
     dmonth.setPromptText("MONTH");
     dday = new ComboBox<String>();
+    dday.setFocusTraversable(false);
     dday.setPromptText("DAY");
     for (int i = 2000; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
       dyear.getItems().add(i + "");

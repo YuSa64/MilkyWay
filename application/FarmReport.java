@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,7 +43,7 @@ public class FarmReport {
     int output = 0;
     List<Farm> list = getRangeReport(null, year, month, null, null, year, month, null);
     for (Farm f : list) {
-      if (f.getF2().substring(5, 7).equals(month))
+      if ((month == null || f.getF2().substring(5, 7).equals(month)) && (year == null || f.getF2().substring(0,4).equals(year)))
         output += Integer.parseInt(f.getF3());
     }
     return output;
