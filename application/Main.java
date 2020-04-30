@@ -26,45 +26,45 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-  private static final int WINDOW_WIDTH = 800;
-  private static final int WINDOW_HEIGHT = 600;
-  private BorderPane root;
-  private Scene mainScene;
-  private VBox leftPanel, rightPanel, rightTop;
-  private HBox leftTop, rightBottom;
-  private TableView<Farm> csvTable;
-  private FarmReport report;
-  private Button[] topB;
-  private FileChooser fileChooser;
-  private Label total;
-  private Button Cfile, Isearch, Iclear;
-  private GridPane d_grid, inputGrid;
-  private PieChart farmChart, monthChart, yearChart;
-  private ObservableList<Farm> dataList;
-  private TextField farmID;
-  private ComboBox<String> year, month, day, dyear, dmonth, dday;
+  private static final int WINDOW_WIDTH = 800; // Width
+  private static final int WINDOW_HEIGHT = 600; // Height
+  private BorderPane root; // Root Pane of UI
+  private Scene mainScene; // Main Scene of Program
+  private VBox leftPanel, rightPanel, rightTop; // UI Panel
+  private HBox leftTop, rightBottom; // UI Panel
+  private TableView<Farm> csvTable; // Table of Data
+  private FarmReport report; // FarmReport of program
+  private Button[] tabB; // Tab Buttons
+  private FileChooser fileChooser; // FileChooser to choose file
+  private Label total; // Label to display Total Weight
+  private Button Cfile, Isearch, Iclear; // Button to Choose File, Search by input, Clear input
+  private GridPane chartgrid, inputGrid; // Grid for PieChart and input section
+  private PieChart farmChart, monthChart, yearChart; // PieChart for farm, month, year
+  private ObservableList<Farm> dataList; // List for TableView
+  private TextField farmID; // User input for Farm ID
+  private ComboBox<String> year, month, day, dyear, dmonth, dday; // User input for year, month, day
 
   /**
+   * Make chart based on data
    * 
-   * @param chart
-   * @param name
-   * @param type
+   * @param chart - Chart to make
+   * @param title - Title of Chart
+   * @param type - type of Chart
    */
-  private void chartMaker(PieChart chart, String name, int type) {
+  private void chartMaker(PieChart chart, String title, int type) {
     ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
     List<Farm> farmList;
     switch (type) {
-      case 0:
+      case 0: // Chart of Each Chart
         farmList = report.getFarmReport(null, null);
         break;
-      case 1:
-
+      case 1: // Chart of Each Month
         farmList = report.getAnnualMonthlyReport(null, null);
         break;
-      case 2:
+      case 2: // Chart of Each Year
         farmList = report.getAnnualData();
         break;
-      default:
+      default: // Chart of Each Data
         farmList = report.getAllList();
         break;
     }
@@ -75,17 +75,18 @@ public class Main extends Application {
       }
     }
     chart.setData(pieChartData);
-    chart.setTitle(name);
+    chart.setTitle(title);
     chart.setLabelsVisible(true);
   }
 
   /**
+   * Show Data/Range report tab
    * 
-   * @param primaryStage
+   * @param primaryStage - Stage of Program
    */
   private void showData(Stage primaryStage) {
-    clearBoard();
-    underliner(topB, 0);
+    clearTab();
+    underliner(tabB, 0);
 
     csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAllList()));
     setTableColumn("FARM", "DATE", "WEIGHT");
@@ -124,12 +125,13 @@ public class Main extends Application {
   }
 
   /**
+   * Show Farm report tab
    * 
-   * @param primaryStage
+   * @param primaryStage - Stage of Program
    */
   private void showFarm(Stage primaryStage) {
-    clearBoard();
-    underliner(topB, 1);
+    clearTab();
+    underliner(tabB, 1);
 
     csvTable
         .setItems(dataList = FXCollections.observableArrayList(report.getFarmReport(null, null)));
@@ -164,14 +166,16 @@ public class Main extends Application {
   }
 
   /**
+   * Show Annual report Tab
    * 
-   * @param primaryStage
+   * @param primaryStage - Stage of Program
    */
   private void showAnnual(Stage primaryStage) {
-    clearBoard();
-    underliner(topB, 2);
+    clearTab();
+    underliner(tabB, 2);
 
-    csvTable.setItems(dataList = FXCollections.observableArrayList(report.getAnnualMonthlyReport(null, null)));
+    csvTable.setItems(
+        dataList = FXCollections.observableArrayList(report.getAnnualMonthlyReport(null, null)));
     setTableColumn("FARM", "PERCENTAGE", "TOTAL WEIGHT");
 
     inputGrid.add(year, 1, 0);
@@ -179,7 +183,8 @@ public class Main extends Application {
     inputGrid.add(Iclear, 5, 0);
 
     Isearch.setOnAction(e -> {
-      csvTable.setItems(FXCollections.observableArrayList(report.getAnnualMonthlyReport(year.getValue(), null)));
+      csvTable.setItems(
+          FXCollections.observableArrayList(report.getAnnualMonthlyReport(year.getValue(), null)));
       csvTable.getSortOrder().add(csvTable.getColumns().get(0));
     });
 
@@ -195,12 +200,13 @@ public class Main extends Application {
   }
 
   /**
+   * Show Monthly report Tab
    * 
-   * @param primaryStage
+   * @param primaryStage - Stage of Program
    */
   private void showMonthly(Stage primaryStage) {
-    clearBoard();
-    underliner(topB, 3);
+    clearTab();
+    underliner(tabB, 3);
 
     csvTable.setItems(
         dataList = FXCollections.observableArrayList(report.getAnnualMonthlyReport(null, null)));
@@ -229,9 +235,10 @@ public class Main extends Application {
   }
 
   /**
+   * Set underline for tab buttons
    * 
-   * @param buttons
-   * @param index
+   * @param buttons - tab buttons
+   * @param index - index of button to activate underline
    */
   private void underliner(Button[] buttons, int index) {
     for (Button b : buttons)
@@ -239,9 +246,6 @@ public class Main extends Application {
     buttons[index].setUnderline(true);
   }
 
-  /**
-   * 
-   */
   @Override
   public void start(Stage primaryStage) throws Exception {
     primaryStage.setResizable(false);
@@ -253,10 +257,13 @@ public class Main extends Application {
   }
 
   /**
+   * Setup main Scene
    * 
-   * @param primaryStage
+   * @param primaryStage - Stage of Program
    */
   private void setupScene(Stage primaryStage) {
+
+    // Initialization
     root = new BorderPane();
     mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
     leftPanel = new VBox();
@@ -271,75 +278,72 @@ public class Main extends Application {
     monthChart = new PieChart();
     yearChart = new PieChart();
     rightBottom = new HBox();
-    d_grid = new GridPane();
-    topB = new Button[] {new Button("DATA"), new Button("FARM"), new Button("ANNUAL"),
+    chartgrid = new GridPane();
+    tabB = new Button[] {new Button("DATA"), new Button("FARM"), new Button("ANNUAL"),
         new Button("MONTHLY")};
+    fileChooser = new FileChooser();
+    inputGrid = new GridPane();
+    Isearch = new Button("Search");
+    Iclear = new Button("Clear");
+    farmID = new TextField();
+    year = new ComboBox<String>();
+    month = new ComboBox<String>();
+    day = new ComboBox<String>();
+    dyear = new ComboBox<String>();
+    dmonth = new ComboBox<String>();
+    dday = new ComboBox<String>();
 
+    // Left Top Setup: Tab Buttons
+    tabB[0].setOnAction(e -> {
+      showData(primaryStage);
+    });
+    tabB[1].setOnAction(e -> {
+      showFarm(primaryStage);
+    });
+    tabB[2].setOnAction(e -> {
+      showAnnual(primaryStage);
+    });
+    tabB[3].setOnAction(e -> {
+      showMonthly(primaryStage);
+    });
+
+    // Left Bottom Setup: TableView setup
     csvTable.setItems(dataList);
     csvTable.setFocusTraversable(false);
     csvTable.prefHeightProperty().bind(primaryStage.heightProperty());
-    csvTable.prefWidthProperty().bind(topB[0].widthProperty().add(topB[1].widthProperty())
-        .add(topB[2].widthProperty()).add(topB[3].widthProperty()).add(80));
-    for (Button b : topB)
+    csvTable.prefWidthProperty().bind(tabB[0].widthProperty().add(tabB[1].widthProperty())
+        .add(tabB[2].widthProperty()).add(tabB[3].widthProperty()).add(80));
+    for (Button b : tabB)
       b.setFocusTraversable(false);
 
-    // Action Event: Buttons
-    topB[0].setOnAction(e -> {
-      showData(primaryStage);
-
-    });
-    topB[1].setOnAction(e -> {
-      showFarm(primaryStage);
-
-    });
-    topB[2].setOnAction(e -> {
-      showAnnual(primaryStage);
-    });
-    topB[3].setOnAction(e -> {
-      showMonthly(primaryStage);
-
-    });
-
-    // leftpannel
+    // Left Panel Setup
     leftTop.setPadding(new Insets(10));
     leftTop.setSpacing(10);
-    leftTop.getChildren().addAll(topB[0], topB[1], topB[2], topB[3]);
+    leftTop.getChildren().addAll(tabB[0], tabB[1], tabB[2], tabB[3]);
     leftPanel.getChildren().addAll(leftTop, csvTable);
     root.setLeft(leftPanel);
 
-    // rightpannel
-    fileChooser = new FileChooser();
+    // Right Top Setup: FileChooser
     fileChooser.setInitialDirectory(new File("."));
     Cfile = new Button("Select File(s)...");
     Cfile.setFocusTraversable(false);
 
-    // user input
-    inputGrid = new GridPane();
+    // Right Top Setup: User Input
     inputGrid.setHgap(10);
     inputGrid.setVgap(10);
-
-    Isearch = new Button("Search");
     Isearch.setFocusTraversable(false);
     Isearch.prefWidthProperty().bind(inputGrid.widthProperty().divide(7));
-    Iclear = new Button("Clear");
     Iclear.setFocusTraversable(false);
     Iclear.prefWidthProperty().bind(inputGrid.widthProperty().divide(7));
-
     Iclear.setOnAction(e -> {
       clearInput();
     });
-
-    farmID = new TextField();
     farmID.setFocusTraversable(false);
     farmID.setPromptText("Enter a farm ID");
-
-    year = new ComboBox<String>();
     year.setFocusTraversable(false);
     year.setPromptText("YEAR");
-    month = new ComboBox<String>();
     month.setFocusTraversable(false);
     month.setPromptText("MONTH");
-    day = new ComboBox<String>();
     day.setFocusTraversable(false);
     day.setPromptText("DAY");
     for (int i = 2000; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
@@ -366,14 +370,10 @@ public class Main extends Application {
           day.getItems().add("31");
       }
     });
-
-    dyear = new ComboBox<String>();
     dyear.setFocusTraversable(false);
     dyear.setPromptText("YEAR");
-    dmonth = new ComboBox<String>();
     dmonth.setFocusTraversable(false);
     dmonth.setPromptText("MONTH");
-    dday = new ComboBox<String>();
     dday.setFocusTraversable(false);
     dday.setPromptText("DAY");
     for (int i = 2000; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
@@ -401,13 +401,21 @@ public class Main extends Application {
       }
     });
 
-    rightTop.getChildren().addAll(Cfile, inputGrid);
-    rightTop.setSpacing(10);
+    // Right Middle Setup
+    chartgrid.setHgap(10);
+    chartgrid.setVgap(10);
+    chartgrid.add(farmChart, 0, 1);
+    chartgrid.add(monthChart, 1, 1);
+    chartgrid.add(yearChart, 0, 2);
+    farmChart.prefWidthProperty().bind(chartgrid.widthProperty().divide(2));
+    monthChart.prefWidthProperty().bind(chartgrid.widthProperty().divide(2));
+    yearChart.prefWidthProperty().bind(chartgrid.widthProperty().divide(2));
+    Label s_label = new Label("Statistic");
+    s_label.prefWidthProperty().bind(chartgrid.widthProperty().divide(2));
+    s_label.setFont(new Font(new Label().getFont().getName(), 20));
+    chartgrid.add(s_label, 0, 0);
 
-    rightPanel.setPadding(new Insets(10));
-    rightPanel.setSpacing(10);
-    root.setCenter(rightPanel);
-    root.setPadding(new Insets(10));
+    // Right Bottom Setup
     Label totalWt = new Label("Total Weight:");
     total.setText(report.getTotalWeight() + "");
     totalWt.prefWidthProperty().bind(rightBottom.widthProperty().divide(4));
@@ -416,27 +424,20 @@ public class Main extends Application {
     total.setFont(new Font(new Label().getFont().getName(), 16));
     rightBottom.getChildren().addAll(totalWt, total);
 
-
-    d_grid.setHgap(10);
-    d_grid.setVgap(10);
-    d_grid.add(farmChart, 0, 1);
-    d_grid.add(monthChart, 1, 1);
-    d_grid.add(yearChart, 0, 2);
-    farmChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
-    monthChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
-    yearChart.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
-
-    Label s_label = new Label("Statistic");
-    s_label.prefWidthProperty().bind(d_grid.widthProperty().divide(2));
-    s_label.setFont(new Font(new Label().getFont().getName(), 20));
-    d_grid.add(s_label, 0, 0);
-
-    rightPanel.getChildren().addAll(rightTop, d_grid, rightBottom);
+    // Right Pannel Setup
+    rightTop.getChildren().addAll(Cfile, inputGrid);
+    rightTop.setSpacing(10);
+    rightPanel.setPadding(new Insets(10));
+    rightPanel.setSpacing(10);
+    root.setCenter(rightPanel);
+    root.setPadding(new Insets(10));
+    rightPanel.getChildren().addAll(rightTop, chartgrid, rightBottom);
   }
 
   /**
+   * Setup Table Columns
    * 
-   * @param columns
+   * @param columns - Name of Column
    */
   private void setTableColumn(String... columns) {
     TableColumn[] fn = new TableColumn[columns.length];
@@ -452,7 +453,7 @@ public class Main extends Application {
   }
 
   /**
-   * 
+   * Clears Inputs
    */
   private void clearInput() {
     farmID.clear();
@@ -469,9 +470,9 @@ public class Main extends Application {
   }
 
   /**
-   * 
+   * Clears Tabs
    */
-  private void clearBoard() {
+  private void clearTab() {
     csvTable.getColumns().clear();
     inputGrid.getChildren().clear();
     chartMaker(monthChart, "MONTHLY", 0);
@@ -480,10 +481,6 @@ public class Main extends Application {
     clearInput();
   }
 
-  /**
-   * 
-   * @param args
-   */
   public static void main(String[] args) {
     launch(args);
   }
