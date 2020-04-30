@@ -18,12 +18,10 @@ import javafx.scene.control.Alert.AlertType;
 public class FarmReport {
   HashSet<Farm> dataSet;
   int totalWeight;
-  int[] monthlyWeight;
 
   public FarmReport() {
     dataSet = new HashSet<Farm>();
     totalWeight = 0;
-    monthlyWeight = new int[12];
   }
 
   public void add(Farm farm) {
@@ -42,8 +40,14 @@ public class FarmReport {
     return totalWeight;
   }
 
-  public int getMonthlyWeight(int month) {
-    return monthlyWeight[month];
+  private int getTargetWeight(String year, String month) {
+    int output = 0;
+    List<Farm> list = getRangeReport(null, year, month, null, null, year, month, null);
+    for (Farm f : list) {
+      if (f.getF2().substring(5, 7).equals(month))
+        output += Integer.parseInt(f.getF3());
+    }
+    return output;
   }
 
   public List<Farm> getMonthlyReport(String year, String month) {
@@ -59,8 +63,8 @@ public class FarmReport {
     }
     for (Map.Entry<String, String> e : map.entrySet()) {
       output.add(new Farm(e.getKey(),
-          Double.toString((Double.parseDouble(e.getValue()) / totalWeight * 100)).substring(0, 5)
-              + "%",
+          Double.toString(Double.parseDouble(e.getValue()) / getTargetWeight(year, month) * 100)
+              .substring(0, 5) + "%",
           e.getValue()));
     }
     return output;
@@ -79,8 +83,8 @@ public class FarmReport {
     }
     for (Map.Entry<String, String> e : map.entrySet()) {
       output.add(new Farm(e.getKey(),
-          Double.toString((Double.parseDouble(e.getValue()) / totalWeight * 100)).substring(0, 5)
-              + "%",
+          Double.toString(Double.parseDouble(e.getValue()) / getTargetWeight(year, null) * 100)
+              .substring(0, 5) + "%",
           e.getValue()));
     }
     return output;
@@ -100,8 +104,9 @@ public class FarmReport {
     }
     for (Map.Entry<String, String> e : map.entrySet()) {
       output.add(new Farm(e.getKey(),
-          Double.toString((Double.parseDouble(e.getValue())
-              / monthlyWeight[Integer.parseInt(e.getKey()) - 1] * 100)).substring(0, 5) + "%",
+          Double
+              .toString(Double.parseDouble(e.getValue()) / getTargetWeight(year, e.getKey()) * 100)
+              .substring(0, 5) + "%",
           e.getValue()));
     }
     return output;
@@ -233,7 +238,6 @@ public class FarmReport {
 
           weight = Integer.parseInt(pweight);
           totalWeight += weight;
-          monthlyWeight[Integer.parseInt(tempDate[1]) - 1] += weight;
           add(new Farm(farm_id, inDate, weight + ""));
         }
 
